@@ -1,5 +1,3 @@
-# simple_pip_mode
-
 A complete Picture-In-Picture mode plugin for android.
 Provides methods to check feature availability, enter PIP mode and callbacks.
 
