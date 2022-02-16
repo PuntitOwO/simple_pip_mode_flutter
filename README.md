@@ -3,6 +3,8 @@
 A complete Picture-In-Picture mode plugin for android.
 Provides methods to check feature availability, enter PIP mode and callbacks.
 
+![pip_example](https://user-images.githubusercontent.com/69210614/154329387-bd90ce0b-d563-4173-b2d0-2cbcc62b670c.gif)
+
 ## Features
 
 * Verify PIP system availability and current state.
