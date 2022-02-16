@@ -1,10 +1,10 @@
 name: simple_pip_mode
 description: A complete Picture-In-Picutre mode plugin (Android support only)
-version: 0.5.0
+version: 0.5.1
 repository: https://github.com/PuntitOwO/simple_pip_mode_flutter
 
 environment:
-  sdk: ">=2.16.1 <3.0.0"
+  sdk: ">=2.16.0 <3.0.0"
   flutter: ">=2.5.0"
 
 dependencies:

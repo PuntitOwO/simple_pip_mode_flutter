@@ -1,6 +1,12 @@
+## 0.5.1
+
+* Initial release bugfix:
+  * README fixed
+  * SDK min version fixed
+
 ## 0.5.0
 
-*Initial development release:
+* Initial development release:
   * SimplePip class added with features:
     * isPipAvailable
     * isPipActivated

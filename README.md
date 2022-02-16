@@ -1,3 +1,6 @@
+[![Pub page](https://img.shields.io/badge/pub-simple__pip__mode__flutter-brightgreen)](https://pub.dev/packages/simple_pip_mode)
+[![License](https://img.shields.io/github/license/PuntitOwO/simple_pip_mode_flutter)](https://github.com/PuntitOwO/simple_pip_mode_flutter/blob/main/LICENSE)
+
 A complete Picture-In-Picture mode plugin for android API level 26+ (Android Oreo).
 
 Provides methods to check feature availability, enter PIP mode and callbacks.
@@ -21,11 +24,16 @@ In the `dependencies:` section of your `pubspec.yaml`, add the following line:
 ## Usage
 
 This section has example code for the following tasks:
+* [Update manifest](#update-manifest)
 * [Verify PIP support](#verify-pip-support)
 * [Entering PIP mode](#entering-pip-mode)
 * [Enabling callbacks](#enabling-callbacks)
 * [Using callbacks](#using-callbacks)
 * [Using the PIP Widget](#using-the-pip-widget)
+
+### Update manifest
+
+Add `android:supportsPictureInPicture="true"` to the activity on your `AndroidManifest.xml`.
 
 ### Verify pip support
 
