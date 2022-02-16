@@ -41,6 +41,7 @@ void main() {
           pip.onPipExited?.call();
           break;
       }
+      return null;
     });
   });
 

@@ -25,12 +25,12 @@ class PipWidget extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _PipWidgetState createState() => _PipWidgetState();
+  PipWidgetState createState() => PipWidgetState();
 }
 
-class _PipWidgetState extends State<PipWidget> {
+class PipWidgetState extends State<PipWidget> {
   /// Pip controller to handle callbacks
-  late final SimplePip _pip;
+  late final SimplePip pip;
 
   /// Whether the app is currently in PIP mode
   bool _pipMode = false;
@@ -38,7 +38,7 @@ class _PipWidgetState extends State<PipWidget> {
   @override
   void initState() {
     super.initState();
-    _pip = SimplePip(
+    pip = SimplePip(
       onPipEntered: onPipEntered,
       onPipExited: onPipExited,
     );
