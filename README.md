@@ -7,21 +7,21 @@ Provides methods to check feature availability, enter PIP mode and callbacks.
 
 ![pip_example](https://user-images.githubusercontent.com/69210614/154329387-bd90ce0b-d563-4173-b2d0-2cbcc62b670c.gif)
 
-## Features
+# Features
 
 * Verify PIP system availability and current state.
 * Method to enter PIP mode, with aspect ratio, auto enter and seamless resize parameters.
 * On PIP mode change Callbacks.
 * Widget to build PIP-dependent layouts.
 
-## Installation
+# Installation
 
 In the `dependencies:` section of your `pubspec.yaml`, add the following line:
 ```
   simple_pip_mode: <latest_version>
 ```
 
-## Usage
+# Usage
 
 This section has example code for the following tasks:
 * [Update manifest](#update-manifest)
@@ -31,15 +31,15 @@ This section has example code for the following tasks:
 * [Using callbacks](#using-callbacks)
 * [Using the PIP Widget](#using-the-pip-widget)
 
-### Update manifest
+## Update manifest
 
 Add `android:supportsPictureInPicture="true"` to the activity on your `AndroidManifest.xml`.
 
-### Verify pip support
+## Verify pip support
 
 Use `SimplePip.isPipAvailable` and `SimplePip.isPipActivated` static getters to verify whether the device supports Picture In Picture feature and the feature is currently activated respectively.
 
-### Entering pip mode
+## Entering pip mode
 
 Import `simple_pip.dart` file and call `enterPipMode` method.
 
@@ -56,7 +56,7 @@ class MyWidget extends StatelessWidget {
 }
 ```
 
-### Enabling callbacks
+## Enabling callbacks
 
 In your main activity kotlin file import the callback helper.
 ```kotlin
@@ -81,7 +81,7 @@ class MainActivity: FlutterActivity() {
 ```
 Done! now you can use PIP callbacks and the PIP widget.
 
-### Using callbacks
+## Using callbacks
 
 To use callbacks, just pass them as parameters to `SimplePip` constructor.
 ```dart
@@ -91,7 +91,7 @@ SimplePip _pip = SimplePip(
 );
 ```
 
-### Using the PIP widget
+## Using the PIP widget
 
 To use the widget, you need to [enable callbacks](#enabling-callbacks) first.
 Import `pip_widget.dart` file.
@@ -108,6 +108,6 @@ class MyWidget extends StatelessWidget {
 ```
 You can also pass callbacks directly to `PipWidget`.
 
-## Contribute
+# Contribute
 
 I'm currently working on more features, so issues and pull requests are appreciated!
