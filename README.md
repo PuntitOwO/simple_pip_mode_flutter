@@ -1,4 +1,5 @@
-A complete Picture-In-Picture mode plugin for android.
+A complete Picture-In-Picture mode plugin for android API level 26+ (Android Oreo).
+
 Provides methods to check feature availability, enter PIP mode and callbacks.
 
 ![pip_example](https://user-images.githubusercontent.com/69210614/154329387-bd90ce0b-d563-4173-b2d0-2cbcc62b670c.gif)
@@ -18,6 +19,12 @@ In the `dependencies:` section of your `pubspec.yaml`, add the following line:
 ```
 
 ## Usage
+
+This section has example code for the following tasks:
+* [Entering PIP mode](#entering-pip-mode)
+* [Enabling callbacks](#enabling-callbacks)
+* [Using callbacks](#using-callbacks)
+* [Using the PIP Widget](#using-the-pip-widget)
 
 ### Entering pip mode
 
@@ -71,7 +78,7 @@ SimplePip _pip = SimplePip(
 );
 ```
 
-### Using the widget
+### Using the PIP widget
 
 To use the widget, you need to [enable callbacks](#enabling-callbacks) first.
 Import `pip_widget.dart` file.
@@ -90,4 +97,4 @@ You can also pass callbacks directly to `PipWidget`.
 
 ## Contribute
 
-I'm currently working on more features, issues and pull requests are appreciated!
+I'm currently working on more features, so issues and pull requests are appreciated!
