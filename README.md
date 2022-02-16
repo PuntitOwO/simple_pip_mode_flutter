@@ -21,10 +21,15 @@ In the `dependencies:` section of your `pubspec.yaml`, add the following line:
 ## Usage
 
 This section has example code for the following tasks:
+* [Verify PIP support](#verify-pip-support)
 * [Entering PIP mode](#entering-pip-mode)
 * [Enabling callbacks](#enabling-callbacks)
 * [Using callbacks](#using-callbacks)
 * [Using the PIP Widget](#using-the-pip-widget)
+
+### Verify pip support
+
+Use `SimplePip.isPipAvailable` and `SimplePip.isPipActivated` static getters to verify whether the device supports Picture In Picture feature and the feature is currently activated respectively.
 
 ### Entering pip mode
 
