@@ -58,7 +58,29 @@ class MyWidget extends StatelessWidget {
 
 ## Enabling callbacks
 
-In your main activity kotlin file import the callback helper.
+There's two ways of enabling callbacks:
+* [Activity wrapper](#activity-wrapper) (New in 0.6.0!)
+* [Callback helper](#callback-helper)
+
+### Activity wrapper 
+
+This is the easiest way to enable the callbacks.
+
+Just import the wrapper class in your main activity file, and inherit from it.
+```kotlin
+import cl.puntito.simple_pip_mode.PipCallbackHelperActivityWrapper
+
+class MainActivity: PipCallbackHelperActivityWrapper() {
+}
+```
+Done! now you can use PIP callbacks and the PIP widget.
+
+### Callback helper
+
+If something went wrong with [Activity wrapper](#activity-wrapper) or you don't want to wrap your activity,
+you can enable callbacks using the callback helper.
+
+To do so, in your main activity kotlin file import the callback helper.
 ```kotlin
 import cl.puntito.simple_pip_mode.PipCallbackHelper
 ```

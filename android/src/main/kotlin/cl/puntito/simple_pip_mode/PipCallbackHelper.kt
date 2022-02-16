@@ -5,7 +5,7 @@ import io.flutter.plugin.common.MethodChannel
 import io.flutter.embedding.engine.FlutterEngine
 
 
-class PipCallbackHelper {
+open class PipCallbackHelper {
   private val CHANNEL = "puntito.simple_pip_mode"
   private lateinit var channel: MethodChannel
 
