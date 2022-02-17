@@ -67,10 +67,19 @@ There's two ways of enabling callbacks:
 This is the easiest way to enable the callbacks.
 
 Just import the wrapper class in your main activity file, and inherit from it.
+
+#### Kotlin
 ```kotlin
 import cl.puntito.simple_pip_mode.PipCallbackHelperActivityWrapper
 
 class MainActivity: PipCallbackHelperActivityWrapper() {
+}
+```
+#### Java
+```java
+import cl.puntito.simple_pip_mode.PipCallbackHelperActivityWrapper;
+
+class MainActivity extends PipCallbackHelperActivityWrapper {
 }
 ```
 Done! now you can use PIP callbacks and the PIP widget.
@@ -80,11 +89,13 @@ Done! now you can use PIP callbacks and the PIP widget.
 If something went wrong with [Activity wrapper](#activity-wrapper) or you don't want to wrap your activity,
 you can enable callbacks using the callback helper.
 
-To do so, in your main activity kotlin file import the callback helper.
+To do so, in your main activity file import the callback helper.
 ```kotlin
 import cl.puntito.simple_pip_mode.PipCallbackHelper
 ```
 Instance a callback helper, provide the flutter engine to it, and finally, call helper on callback.
+
+#### Kotlin
 ```kotlin
 class MainActivity: FlutterActivity() {
   //...
@@ -99,6 +110,25 @@ class MainActivity: FlutterActivity() {
     callbackHelper.onPictureInPictureModeChanged(active)
   }
   //...
+}
+```
+#### Java
+```java
+public class MainActivity extends FlutterActivity {
+    //...
+    private final PipCallbackHelper callbackHelper = new PipCallbackHelper();
+    //...
+    @Override
+    public void configureFlutterEngine(@NonNull FlutterEngine flutterEngine) {
+        super.configureFlutterEngine(flutterEngine);
+        callbackHelper.configureFlutterEngine(flutterEngine);
+    }
+    
+    @Override
+    public void onPictureInPictureModeChanged(boolean active, Configuration newConfig) {
+        callbackHelper.onPictureInPictureModeChanged(active);
+    }
+    //...
 }
 ```
 Done! now you can use PIP callbacks and the PIP widget.
@@ -116,14 +146,18 @@ SimplePip _pip = SimplePip(
 ## Using the PIP widget
 
 To use the widget, you need to [enable callbacks](#enabling-callbacks) first.
-Import `pip_widget.dart` file.
+Import `pip_widget.dart` file. 
+
+Add a `PipWidget` widget to your tree and give it a `builder` or a `child`, and a `pipBuilder` or a `pipChild`.
 ```dart
 import 'package:simple_pip_mode/pip_widget.dart';
 class MyWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return PipWidget(
       builder: (context) => Text('This is built when PIP mode is not active'),
-      pipBuilder: (context) => Text('This is built when PIP mode is active'),
+      child: Text('This widget is not used because builder is not null'),
+      //pipBuilder: (context) => Text('This is built when PIP mode is active'),
+      pipChild: Text('This widget is used because pipBuilder is null'),
     );
   }
 }
