@@ -10,13 +10,15 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   testWidgets(
-    'widget rendering should change when pip mode changes',
+    'builder rendering should change when pip mode changes',
     (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: PipWidget(
-            builder: (_) => const Text('off'),
-            pipBuilder: (_) => const Text('on'),
+            builder: (_) => const Text('builder'),
+            child: const Text('child'),
+            pipBuilder: (_) => const Text('pipbuilder'),
+            pipChild: const Text('pipchild'),
           ),
         ),
       );
@@ -44,20 +46,71 @@ void main() {
         return null;
       });
 
-      expect(find.text('off'), findsOneWidget);
-      expect(find.text('on'), findsNothing);
+      expect(find.text('builder'), findsOneWidget);
+      expect(find.text('pipbuilder'), findsNothing);
 
       await pip.enterPipMode();
       await tester.pump();
 
-      expect(find.text('off'), findsNothing);
-      expect(find.text('on'), findsOneWidget);
+      expect(find.text('builder'), findsNothing);
+      expect(find.text('pipbuilder'), findsOneWidget);
 
       await channel.invokeMethod('testExitPipMode');
       await tester.pump();
 
-      expect(find.text('off'), findsOneWidget);
-      expect(find.text('on'), findsNothing);
+      expect(find.text('builder'), findsOneWidget);
+      expect(find.text('pipbuilder'), findsNothing);
+    },
+  );
+  testWidgets(
+    'child rendering should change when pip mode changes',
+    (WidgetTester tester) async {
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: PipWidget(
+            child: Text('child'),
+            pipChild: Text('pipchild'),
+          ),
+        ),
+      );
+      final PipWidgetState state = tester.state(find.byType(PipWidget));
+      SimplePip pip = state.pip;
+
+      TestDefaultBinaryMessengerBinding.instance!.defaultBinaryMessenger
+          .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
+        switch (methodCall.method) {
+          case 'enterPipMode':
+            channel.invokeMethod('onPipEntered');
+            break;
+          // Simulate calling the exited callback
+          case 'testExitPipMode':
+            channel.invokeMethod('onPipExited');
+            break;
+          // This handler overrides the SimplePip handler, so we add cases here.
+          case 'onPipEntered':
+            pip.onPipEntered?.call();
+            break;
+          case 'onPipExited':
+            pip.onPipExited?.call();
+            break;
+        }
+        return null;
+      });
+
+      expect(find.text('child'), findsOneWidget);
+      expect(find.text('pipchild'), findsNothing);
+
+      await pip.enterPipMode();
+      await tester.pump();
+
+      expect(find.text('child'), findsNothing);
+      expect(find.text('pipchild'), findsOneWidget);
+
+      await channel.invokeMethod('testExitPipMode');
+      await tester.pump();
+
+      expect(find.text('child'), findsOneWidget);
+      expect(find.text('pipchild'), findsNothing);
     },
   );
 }
