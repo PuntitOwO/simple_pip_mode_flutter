@@ -3,6 +3,11 @@
 * Callback enabling process simplified:
     * Kotlin PipCallbackHelperActivityWrapper added
     * Example app updated to show the new wrapper usage
+    * Readme instructions update
+    
+* Pip Widget parameters added:
+    * child widget is used if builder is null
+    * pipChild widget is used if pipBuilder is null
 
 ## 0.5.1
 
