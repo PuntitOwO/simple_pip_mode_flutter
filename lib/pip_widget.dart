@@ -2,10 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:simple_pip_mode/simple_pip.dart';
 
 /// Widget that uses PIP callbacks to build some widgets depending on PIP state.
+/// At least one of [builder] or [child] must not be null.
+/// At least one of [pipBuilder] or [pipChild] must not be null.
 ///
 /// Parameters:
-/// * [pipBuilder] function is used when app is in PIP mode. Must not be null.
-/// * [builder] function is used when app is not in PIP mode. Must not be null.
+/// * [pipBuilder] function is used when app is in PIP mode.
+/// * [pipChild] widget is used when app is in PIP mode and [pipBuilder] is null.
+/// * [builder] function is used when app is not in PIP mode.
+/// * [child] widget is used when app is not in PIP mode and [builder] is null.
 /// * [onPipEntered] function is called when app enters PIP mode.
 /// * [onPipExited] function is called when app exits PIP mode.
 ///
@@ -14,15 +18,21 @@ import 'package:simple_pip_mode/simple_pip.dart';
 class PipWidget extends StatefulWidget {
   final VoidCallback? onPipEntered;
   final VoidCallback? onPipExited;
-  final Widget Function(BuildContext) builder;
-  final Widget Function(BuildContext) pipBuilder;
+  final Widget Function(BuildContext)? builder;
+  final Widget? child;
+  final Widget Function(BuildContext)? pipBuilder;
+  final Widget? pipChild;
   const PipWidget({
     Key? key,
     this.onPipEntered,
     this.onPipExited,
-    required this.builder,
-    required this.pipBuilder,
-  }) : super(key: key);
+    this.builder,
+    this.child,
+    this.pipBuilder,
+    this.pipChild,
+  })  : assert(child != null || builder != null),
+        assert(pipChild != null || pipBuilder != null),
+        super(key: key);
 
   @override
   PipWidgetState createState() => PipWidgetState();
@@ -62,6 +72,8 @@ class PipWidgetState extends State<PipWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return _pipMode ? widget.pipBuilder(context) : widget.builder(context);
+    return _pipMode
+        ? (widget.pipBuilder?.call(context) ?? widget.pipChild!)
+        : (widget.builder?.call(context) ?? widget.child!);
   }
 }

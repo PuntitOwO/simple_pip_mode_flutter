@@ -53,64 +53,60 @@ class _ExampleAppState extends State<ExampleApp> {
     return MaterialApp(
       // Pip widget can build different widgets for each mode
       home: PipWidget(
-        // builder is used when not in pip mode
-        builder: (context) {
-          return Scaffold(
-            appBar: AppBar(
-              title: const Text('Pip Plugin example app'),
-            ),
-            body: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const SizedBox(width: double.infinity),
-                Text('Pip is ${pipAvailable ? '' : 'not '}Available'),
-                const Text('Pip is not activated'),
-                DropdownButton<List<int>>(
-                  value: aspectRatio,
-                  onChanged: (List<int>? newValue) {
-                    if (newValue == null) return;
-                    setState(() {
-                      aspectRatio = newValue;
-                    });
-                  },
-                  items: aspectRatios
-                      .map<DropdownMenuItem<List<int>>>(
-                        (List<int> value) => DropdownMenuItem<List<int>>(
-                          child: Text('${value.first} : ${value.last}'),
-                          value: value,
-                        ),
-                      )
-                      .toList(),
-                ),
-                IconButton(
-                  onPressed: pipAvailable
-                      ? () => pip.enterPipMode(
-                            aspectRatio: aspectRatio,
-                          )
-                      : null,
-                  icon: const Icon(Icons.picture_in_picture),
-                ),
-              ],
-            ),
-          );
-        },
-        // pip builder is used when in pip mode
-        pipBuilder: (context) {
-          return Scaffold(
-            appBar: AppBar(
-              title: const Text('Pip Mode'),
-            ),
-            body: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: const [
-                SizedBox(width: double.infinity),
-                Text('Pip activated'),
-              ],
-            ),
-          );
-        },
+        // builder is null so child is used when not in pip mode
+        child: Scaffold(
+          appBar: AppBar(
+            title: const Text('Pip Plugin example app'),
+          ),
+          body: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const SizedBox(width: double.infinity),
+              Text('Pip is ${pipAvailable ? '' : 'not '}Available'),
+              const Text('Pip is not activated'),
+              DropdownButton<List<int>>(
+                value: aspectRatio,
+                onChanged: (List<int>? newValue) {
+                  if (newValue == null) return;
+                  setState(() {
+                    aspectRatio = newValue;
+                  });
+                },
+                items: aspectRatios
+                    .map<DropdownMenuItem<List<int>>>(
+                      (List<int> value) => DropdownMenuItem<List<int>>(
+                        child: Text('${value.first} : ${value.last}'),
+                        value: value,
+                      ),
+                    )
+                    .toList(),
+              ),
+              IconButton(
+                onPressed: pipAvailable
+                    ? () => pip.enterPipMode(
+                          aspectRatio: aspectRatio,
+                        )
+                    : null,
+                icon: const Icon(Icons.picture_in_picture),
+              ),
+            ],
+          ),
+        ),
+        // pip builder is null so pip child is used when in pip mode
+        pipChild: Scaffold(
+          appBar: AppBar(
+            title: const Text('Pip Mode'),
+          ),
+          body: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: const [
+              SizedBox(width: double.infinity),
+              Text('Pip activated'),
+            ],
+          ),
+        ),
       ),
     );
   }
