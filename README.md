@@ -164,6 +164,15 @@ class MyWidget extends StatelessWidget {
 ```
 You can also pass callbacks directly to `PipWidget`.
 
+# Notes
+
+## Multi-platform apps
+
+Every `SimplePip` method calls android native code, so make sure you only make a call to a `SimplePip` method when running in an Android device.
+This includes `SimplePip.isPipAvailable`.
+
+Calling `SimplePip` methods on a non-Android device will raise a `MissingPluginException` error.
+
 # Contribute
 
 I'm currently working on more features, so issues and pull requests are appreciated!
