@@ -56,10 +56,30 @@ class MyWidget extends StatelessWidget {
 }
 ```
 
+## Setting automatic pip mode
+
+Import `simple_pip.dart` file and call `setAutoPipMode` method.
+This needs at least API level 31.
+
+```dart
+import 'package:simple_pip_mode/simple_pip.dart';
+
+class MyWidget extends StatelessWidget {
+  Widget build(BuildContext context) {
+    return IconButton(
+      icon: Icon(Icons.picture_in_picture),
+      onPressed: () => SimplePip().setAutoPipMode(),
+    );
+  }
+}
+```
+
+This way, when user presses home (or uses home gesture), the app enters PIP mode automatically.
+
 ## Enabling callbacks
 
 There's two ways of enabling callbacks:
-* [Activity wrapper](#activity-wrapper) (New in 0.6.0!)
+* [Activity wrapper](#activity-wrapper) (Recommended!)
 * [Callback helper](#callback-helper)
 
 ### Activity wrapper 
@@ -163,6 +183,15 @@ class MyWidget extends StatelessWidget {
 }
 ```
 You can also pass callbacks directly to `PipWidget`.
+
+# Notes
+
+## Multi-platform apps
+
+Every `SimplePip` method calls android native code, so make sure you only make a call to a `SimplePip` method when running in an Android device.
+This includes `SimplePip.isPipAvailable`.
+
+Calling `SimplePip` methods on a non-Android device will raise a `MissingPluginException` error.
 
 # Contribute
 

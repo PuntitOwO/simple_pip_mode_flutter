@@ -30,6 +30,8 @@ class ExampleApp extends StatefulWidget {
 class _ExampleAppState extends State<ExampleApp> {
   bool pipAvailable = false;
   List<int> aspectRatio = aspectRatios.first;
+  bool autoPipAvailable = false;
+  bool autoPipSwitch = false;
   late SimplePip pip;
 
   @override
@@ -43,8 +45,10 @@ class _ExampleAppState extends State<ExampleApp> {
   /// Checks if system supports PIP mode
   Future<void> requestPipAvailability() async {
     var isAvailable = await SimplePip.isPipAvailable;
+    var isAutoPipAvailable = await SimplePip.isAutoPipAvailable;
     setState(() {
       pipAvailable = isAvailable;
+      autoPipAvailable = isAutoPipAvailable;
     });
   }
 
@@ -69,6 +73,12 @@ class _ExampleAppState extends State<ExampleApp> {
                 value: aspectRatio,
                 onChanged: (List<int>? newValue) {
                   if (newValue == null) return;
+                  if (autoPipSwitch) {
+                    pip.setAutoPipMode(
+                      aspectRatio: newValue,
+                      seamlessResize: true,
+                    );
+                  }
                   setState(() {
                     aspectRatio = newValue;
                   });
@@ -81,6 +91,22 @@ class _ExampleAppState extends State<ExampleApp> {
                       ),
                     )
                     .toList(),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text('Auto Enter (Android S): '),
+                  Switch(
+                    value: autoPipSwitch,
+                    onChanged: autoPipAvailable
+                        ? (newValue) {
+                            setState(() {
+                              autoPipSwitch = newValue;
+                            });
+                          }
+                        : null,
+                  ),
+                ],
               ),
               IconButton(
                 onPressed: pipAvailable

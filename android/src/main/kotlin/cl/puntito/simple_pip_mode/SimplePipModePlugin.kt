@@ -49,6 +49,8 @@ class SimplePipModePlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
       )
     } else if (call.method == "isPipActivated") {
       result.success(activity.isInPictureInPictureMode)
+    } else if (call.method == "isAutoPipAvailable") {
+      result.success(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
     } else if (call.method == "enterPipMode") {
       val aspectRatio = call.argument<List<Int>>("aspectRatio")
       val autoEnter = call.argument<Boolean>("autoEnter")
@@ -65,6 +67,22 @@ class SimplePipModePlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
       result.success(
           activity.enterPictureInPictureMode(params.build())
       )
+    } else if (call.method == "setAutoPipMode") {
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        val aspectRatio = call.argument<List<Int>>("aspectRatio")
+        val seamlessResize = call.argument<Boolean>("seamlessResize")
+        // TODO(add actions)
+        var params = PictureInPictureParams.Builder()
+            .setAspectRatio(Rational(aspectRatio!![0], aspectRatio[1]))
+            .setAutoEnterEnabled(true)
+            .setSeamlessResizeEnabled(seamlessResize!!)
+
+            activity.setPictureInPictureParams(params.build())
+
+        result.success(true)
+      } else {
+        result.error("NotImplemented", "System Version less than Android S found", "Expected Android S or newer.")
+      }
     } else {
       result.notImplemented()
     }
@@ -75,7 +93,6 @@ class SimplePipModePlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
   }
 
   override fun onDetachedFromActivityForConfigChanges() {
-    TODO("Not yet implemented")
   }
 
   override fun onReattachedToActivityForConfigChanges(binding: ActivityPluginBinding) {
@@ -83,7 +100,6 @@ class SimplePipModePlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
   }
 
   override fun onDetachedFromActivity() {
-    TODO("Not yet implemented")
   }
 
 }

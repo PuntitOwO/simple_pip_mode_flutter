@@ -18,6 +18,12 @@ class SimplePip {
     return isAvailable ?? false;
   }
 
+  /// Whether the device supports AutoEnter PIP parameter (Android S)
+  static Future<bool> get isAutoPipAvailable async {
+    final bool? isAvailable = await _channel.invokeMethod('isAutoPipAvailable');
+    return isAvailable ?? false;
+  }
+
   /// Whether the app is currently in PIP mode.
   static Future<bool> get isPipActivated async {
     final bool? isActivated = await _channel.invokeMethod('isPipActivated');
@@ -44,6 +50,22 @@ class SimplePip {
     final bool? enteredSuccessfully =
         await _channel.invokeMethod('enterPipMode', params);
     return enteredSuccessfully ?? false;
+  }
+
+  /// Request setting automatic PIP mode.
+  /// Android 12 (Android S, API level 31) or newer required.
+  Future<bool> setAutoPipMode({
+    aspectRatio = const [16, 9],
+    seamlessResize = false,
+  }) async {
+    Map params = {
+      'aspectRatio': aspectRatio,
+      'autoEnter': true,
+      'seamlessResize': seamlessResize,
+    };
+    final bool? setSuccessfully =
+        await _channel.invokeMethod('setAutoPipMode', params);
+    return setSuccessfully ?? false;
   }
 
   SimplePip({this.onPipEntered, this.onPipExited}) {

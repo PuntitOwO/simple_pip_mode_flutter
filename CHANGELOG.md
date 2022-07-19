@@ -1,3 +1,8 @@
+## 0.7.0
+
+* Automatic pip method implemented for Android S.
+* Bugfix: [Issue #2](https://github.com/PuntitOwO/simple_pip_mode_flutter/issues/2)
+
 ## 0.6.0
 
 * Callback enabling process simplified:
