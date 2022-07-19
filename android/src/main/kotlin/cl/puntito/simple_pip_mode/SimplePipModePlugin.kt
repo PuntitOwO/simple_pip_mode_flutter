@@ -70,17 +70,16 @@ class SimplePipModePlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
     } else if (call.method == "setAutoPipMode") {
       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
         val aspectRatio = call.argument<List<Int>>("aspectRatio")
-        val autoEnter = call.argument<Boolean>("autoEnter")
         val seamlessResize = call.argument<Boolean>("seamlessResize")
         // TODO(add actions)
         var params = PictureInPictureParams.Builder()
             .setAspectRatio(Rational(aspectRatio!![0], aspectRatio[1]))
-            .setAutoEnterEnabled(autoEnter!!)
+            .setAutoEnterEnabled(true)
             .setSeamlessResizeEnabled(seamlessResize!!)
 
-        result.success(
             activity.setPictureInPictureParams(params.build())
-        )
+
+        result.success(true)
       } else {
         result.error("NotImplemented", "System Version less than Android S found", "Expected Android S or newer.")
       }
