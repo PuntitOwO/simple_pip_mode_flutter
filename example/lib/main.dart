@@ -218,6 +218,7 @@ class _ExampleAppState extends State<ExampleApp> {
                                     pip.setIsPlaying(newValue);
                                     setState(() {
                                       isPlaying = newValue;
+                                      actionResponse = "";
                                     });
                                   },
                                   icon: Icon(
