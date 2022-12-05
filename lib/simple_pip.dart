@@ -83,8 +83,18 @@ class SimplePip {
     return setSuccessfully ?? false;
   }
 
-  /// Updates the state of actions [PipAction.play] and [PipAction.pause]
-  /// Only affects media preset actions layout
+  /// Updates the actions [PipAction.play] and [PipAction.pause]
+  /// When it is called it does re-render the action inside PIP acording with [isPlaying] value
+  /// 
+  /// If [isPlaying] is `true` then PIP will shows [PipAction.pause] action
+  /// If [isPlaying] is `false` then PIP will shows [PipAction.play] action
+  /// 
+  /// NOTE: This method should ONLY be used to update PIP action when the player state was changed by
+  /// OTHER button that is NOT the PIP's one (ex.: the player play/pause button, notification controller play/pause button
+  /// or whatever button you have that calls your playerController's play/pause). When user taps PIP's [PipAction.play] or 
+  /// [PipAction.pause] it automatically updates the action, WITHOUT NEEDING to call this [setIsPlaying] method.
+  /// 
+  /// Only affects media actions layout presets or presets that uses [PipAction.play] or [PipAction.pause] actions.
   Future<bool> setIsPlaying(bool isPlaying) async {
     Map params = {
       'isPlaying': isPlaying
