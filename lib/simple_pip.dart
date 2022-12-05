@@ -37,7 +37,7 @@ class SimplePip {
   /// Called when the app exits PIP mode
   VoidCallback? onPipExited;
 
-  /// Called when the user touch on a PIP action
+  /// Called when the user taps on a PIP action
   Function(PipAction)? onPipAction;
 
   /// Request entering PIP mode
