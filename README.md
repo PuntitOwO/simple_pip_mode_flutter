@@ -13,6 +13,7 @@ Provides methods to check feature availability, enter PIP mode and callbacks.
 * Method to enter PIP mode, with aspect ratio, auto enter and seamless resize parameters.
 * On PIP mode change Callbacks.
 * Widget to build PIP-dependent layouts.
+* PIP Actions (media action presets).
 
 # Installation
 
@@ -178,6 +179,45 @@ class MyWidget extends StatelessWidget {
       child: Text('This widget is not used because builder is not null'),
       //pipBuilder: (context) => Text('This is built when PIP mode is active'),
       pipChild: Text('This widget is used because pipBuilder is null'),
+    );
+  }
+}
+```
+You can also pass callbacks directly to `PipWidget`.
+
+## Using PIP Actions
+
+To use PIP actions, you need to specify a `pipLayout` preset on your `PipWidget`. 
+The current available action layout presets are focused on giving support to media reproduction controls. They are `media`, `media_only_pause` and `media_live`. Those are defined on the `[PipActionsLayout]` enum.
+
+You can also add a listener (`onPipAction`) to handle actions callbacks from `PipWidget`.
+```dart
+import 'package:simple_pip_mode/pip_widget.dart';
+import 'package:simple_pip_mode/actions/pip_action.dart';
+import 'package:simple_pip_mode/actions/pip_actions_layout.dart';
+class MyWidget extends StatelessWidget {
+  ExampleVideoPlayer videoPlayer = ExampleVideoPlayer();
+  Widget build(BuildContext context) {
+    return PipWidget(
+      pipLayout: PipActionsLayout.media,
+      onPipAction: (action) {
+        switch (action) {
+          case PipAction.play:
+            // example: videoPlayerController.play();
+            break;
+          case PipAction.pause:
+            // example: videoPlayerController.pause();
+            break;
+          case PipAction.next:
+            // example: videoPlayerController.next();
+          case PipAction.previous:
+            // example: videoPlayerController.previous();
+          default:
+            break;
+        }
+      },
+      pipChild: videoPlayer,
+      child: videoPlayer,
     );
   }
 }
