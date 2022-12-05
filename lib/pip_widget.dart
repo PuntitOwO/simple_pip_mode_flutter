@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:simple_pip_mode/actions/pip_action.dart';
+import 'package:simple_pip_mode/actions/pip_actions_layout.dart';
 import 'package:simple_pip_mode/simple_pip.dart';
 
 /// Widget that uses PIP callbacks to build some widgets depending on PIP state.
@@ -12,24 +14,29 @@ import 'package:simple_pip_mode/simple_pip.dart';
 /// * [child] widget is used when app is not in PIP mode and [builder] is null.
 /// * [onPipEntered] function is called when app enters PIP mode.
 /// * [onPipExited] function is called when app exits PIP mode.
+/// * [pipLayout] defines the PIP actions preset layout.
 ///
 /// See also:
 /// * [SimplePip], to handle callbacks.
 class PipWidget extends StatefulWidget {
   final VoidCallback? onPipEntered;
   final VoidCallback? onPipExited;
+  final Function(PipAction)? onPipAction;
   final Widget Function(BuildContext)? builder;
   final Widget? child;
   final Widget Function(BuildContext)? pipBuilder;
   final Widget? pipChild;
+  final PipActionsLayout pipLayout;
   const PipWidget({
     Key? key,
     this.onPipEntered,
     this.onPipExited,
+    this.onPipAction,
     this.builder,
     this.child,
     this.pipBuilder,
     this.pipChild,
+    this.pipLayout = PipActionsLayout.none
   })  : assert(child != null || builder != null),
         assert(pipChild != null || pipBuilder != null),
         super(key: key);
@@ -51,7 +58,9 @@ class PipWidgetState extends State<PipWidget> {
     pip = SimplePip(
       onPipEntered: onPipEntered,
       onPipExited: onPipExited,
+      onPipAction: onPipAction
     );
+    pip.setPipActionsLayout(widget.pipLayout);
   }
 
   /// The app entered PIP mode
@@ -68,6 +77,11 @@ class PipWidgetState extends State<PipWidget> {
       _pipMode = false;
     });
     widget.onPipExited?.call();
+  }
+
+  /// The user taps one PIP action 
+  void onPipAction(PipAction action) {
+    widget.onPipAction?.call(action);
   }
 
   @override
