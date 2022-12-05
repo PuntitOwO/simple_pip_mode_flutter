@@ -107,7 +107,7 @@ class _ExampleAppState extends State<ExampleApp> {
               });
               break;
             case PipAction.previous:
-              // example: videoPlayerController.next();
+              // example: videoPlayerController.previous();
               setState(() {
                 actionResponse = "Previous";
               });
