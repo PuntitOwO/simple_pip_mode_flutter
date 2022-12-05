@@ -31,6 +31,7 @@ This section has example code for the following tasks:
 * [Enabling callbacks](#enabling-callbacks)
 * [Using callbacks](#using-callbacks)
 * [Using the PIP Widget](#using-the-pip-widget)
+* [Using PIP Actions](#using-pip-actions)
 
 ## Update manifest
 
