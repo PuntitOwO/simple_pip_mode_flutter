@@ -3,7 +3,7 @@
 
 A complete Picture-In-Picture mode plugin for android API level 26+ (Android Oreo).
 
-Provides methods to check feature availability, enter PIP mode and callbacks.
+Provides methods to check feature availability, enter PIP mode, callbacks for mode change and PIP Actions support.
 
 ![pip_example](https://user-images.githubusercontent.com/69210614/154329387-bd90ce0b-d563-4173-b2d0-2cbcc62b670c.gif)
 
@@ -13,6 +13,7 @@ Provides methods to check feature availability, enter PIP mode and callbacks.
 * Method to enter PIP mode, with aspect ratio, auto enter and seamless resize parameters.
 * On PIP mode change Callbacks.
 * Widget to build PIP-dependent layouts.
+* PIP Actions (media action presets).
 
 # Installation
 
@@ -30,6 +31,7 @@ This section has example code for the following tasks:
 * [Enabling callbacks](#enabling-callbacks)
 * [Using callbacks](#using-callbacks)
 * [Using the PIP Widget](#using-the-pip-widget)
+* [Using PIP Actions](#using-pip-actions)
 
 ## Update manifest
 
@@ -184,6 +186,49 @@ class MyWidget extends StatelessWidget {
 ```
 You can also pass callbacks directly to `PipWidget`.
 
+## Using PIP Actions
+
+To use PIP actions, you need to specify a `pipLayout` preset on your `PipWidget`. 
+The current available action layout presets are focused on giving support to media reproduction controls. They are `media`, `media_only_pause` and `media_live`. Those are defined on the `[PipActionsLayout]` enum.
+
+You can also add a `onPipAction` listener to handle actions callbacks from `PipWidget`. This can be defined on `SimplePip(onPipAction: ...)` too.
+```dart
+import 'package:simple_pip_mode/pip_widget.dart';
+import 'package:simple_pip_mode/actions/pip_action.dart';
+import 'package:simple_pip_mode/actions/pip_actions_layout.dart';
+class MyWidget extends StatelessWidget {
+  ExampleVideoPlayer videoPlayer = ExampleVideoPlayer();
+  Widget build(BuildContext context) {
+    return PipWidget(
+      pipLayout: PipActionsLayout.media,
+      onPipAction: (action) {
+        switch (action) {
+          case PipAction.play:
+            // example: videoPlayerController.play();
+            break;
+          case PipAction.pause:
+            // example: videoPlayerController.pause();
+            break;
+          case PipAction.next:
+            // example: videoPlayerController.next();
+          case PipAction.previous:
+            // example: videoPlayerController.previous();
+          default:
+            break;
+        }
+      },
+      pipChild: videoPlayer,
+      child: videoPlayer,
+    );
+  }
+}
+```
+
+PIP Actions demo:
+
+![pip_actions_example](https://user-images.githubusercontent.com/43859767/205550072-f79f5541-35b0-46de-a5cd-59fb1197ae0a.mp4)
+
+
 # Notes
 
 ## Multi-platform apps
@@ -194,5 +239,7 @@ This includes `SimplePip.isPipAvailable`.
 Calling `SimplePip` methods on a non-Android device will raise a `MissingPluginException` error.
 
 # Contribute
+
+Huge thanks to [Erick Daros](https://github.com/erickdaros) for PIP Actions feature.
 
 I'm currently working on more features, so issues and pull requests are appreciated!

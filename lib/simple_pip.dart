@@ -1,7 +1,8 @@
 import 'dart:async';
-import 'dart:ui';
 
 import 'package:flutter/services.dart';
+import 'package:simple_pip_mode/actions/pip_action.dart';
+import 'package:simple_pip_mode/actions/pip_actions_layout.dart';
 
 /// Main controller class.
 /// It can verify whether the system supports PIP,
@@ -36,6 +37,9 @@ class SimplePip {
   /// Called when the app exits PIP mode
   VoidCallback? onPipExited;
 
+  /// Called when the user taps on a PIP action
+  Function(PipAction)? onPipAction;
+
   /// Request entering PIP mode
   Future<bool> enterPipMode({
     aspectRatio = const [16, 9],
@@ -68,14 +72,51 @@ class SimplePip {
     return setSuccessfully ?? false;
   }
 
-  SimplePip({this.onPipEntered, this.onPipExited}) {
-    if (onPipEntered != null || onPipExited != null) {
+  /// Updates the current actions layout with a preset layout
+  /// The preset layout is defined by [PipActionsLayout] and it's equivalent enum inside Android src
+  Future<bool> setPipActionsLayout(PipActionsLayout layout) async {
+    Map params = {'layout': layout.name};
+    final bool? setSuccessfully =
+        await _channel.invokeMethod('setPipLayout', params);
+    return setSuccessfully ?? false;
+  }
+
+  /// Updates the actions [PipAction.play] and [PipAction.pause]
+  /// When it is called it does re-render the action inside PIP acording with [isPlaying] value
+  ///
+  /// If [isPlaying] is `true` then PIP will shows [PipAction.pause] action
+  /// If [isPlaying] is `false` then PIP will shows [PipAction.play] action
+  ///
+  /// NOTE: This method should ONLY be used to update PIP action when the player state was changed by
+  /// OTHER button that is NOT the PIP's one (ex.: the player play/pause button, notification controller play/pause button
+  /// or whatever button you have that calls your playerController's play/pause). When user taps PIP's [PipAction.play] or
+  /// [PipAction.pause] it automatically updates the action, WITHOUT NEEDING to call this [setIsPlaying] method.
+  ///
+  /// Only affects media actions layout presets or presets that uses [PipAction.play] or [PipAction.pause] actions.
+  Future<bool> setIsPlaying(bool isPlaying) async {
+    Map params = {'isPlaying': isPlaying};
+    final bool? setSuccessfully =
+        await _channel.invokeMethod('setIsPlaying', params);
+    return setSuccessfully ?? false;
+  }
+
+  SimplePip({this.onPipEntered, this.onPipExited, this.onPipAction}) {
+    if (onPipEntered != null || onPipExited != null || onPipAction != null) {
       _channel.setMethodCallHandler(
         (call) async {
-          if (call.method == 'onPipEntered') {
-            onPipEntered?.call();
-          } else if (call.method == 'onPipExited') {
-            onPipExited?.call();
+          switch (call.method) {
+            case 'onPipEntered':
+              onPipEntered?.call();
+              break;
+            case 'onPipExited':
+              onPipExited?.call();
+              break;
+            case 'onPipAction':
+              String arg = call.arguments;
+              PipAction action =
+                  PipAction.values.firstWhere((e) => e.name == arg);
+              onPipAction?.call(action);
+              break;
           }
         },
       );

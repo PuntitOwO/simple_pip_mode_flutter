@@ -1,3 +1,7 @@
+## 0.8.0
+
+* Pip Actions implemented by [Erick Daros](https://github.com/erickdaros): [Issue #5](https://github.com/PuntitOwO/simple_pip_mode_flutter/issues/5).
+
 ## 0.7.1
 
 * Pubspec file mini-fix

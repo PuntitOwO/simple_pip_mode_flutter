@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="pip_action_play">Play</string>
+    <string name="pip_action_play_description">Play media</string>
+    <string name="pip_action_pause">Pause</string>
+    <string name="pip_action_pause_description">Pause media</string>
+    <string name="pip_action_next">Next</string>
+    <string name="pip_action_next_description">Skip to next media</string>
+    <string name="pip_action_previous">Previous</string>
+    <string name="pip_action_previous_description">Back to previous media</string>
+    <string name="pip_action_live">Live</string>
+    <string name="pip_action_live_description">Go to live view</string>
+
+</resources>
