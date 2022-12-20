@@ -1,3 +1,7 @@
+## 0.7.1
+
+* Pubspec file mini-fix
+
 ## 0.7.0
 
 * Automatic pip method implemented for Android S.
