@@ -3,7 +3,7 @@
 
 A complete Picture-In-Picture mode plugin for android API level 26+ (Android Oreo).
 
-Provides methods to check feature availability, enter PIP mode and callbacks.
+Provides methods to check feature availability, enter PIP mode, callbacks for mode change and PIP Actions support.
 
 ![pip_example](https://user-images.githubusercontent.com/69210614/154329387-bd90ce0b-d563-4173-b2d0-2cbcc62b670c.gif)
 
@@ -239,5 +239,7 @@ This includes `SimplePip.isPipAvailable`.
 Calling `SimplePip` methods on a non-Android device will raise a `MissingPluginException` error.
 
 # Contribute
+
+Huge thanks to [Erick Daros](https://github.com/erickdaros) for PIP Actions feature.
 
 I'm currently working on more features, so issues and pull requests are appreciated!
