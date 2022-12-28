@@ -131,10 +131,11 @@ class SimplePipModePlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
     } else if (call.method == "setAutoPipMode") {
       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
         val aspectRatio = call.argument<List<Int>>("aspectRatio")
+        val autoEnter = call.argument<Boolean>("autoEnter")
         val seamlessResize = call.argument<Boolean>("seamlessResize")
         val params = PictureInPictureParams.Builder()
           .setAspectRatio(Rational(aspectRatio!![0], aspectRatio[1]))
-          .setAutoEnterEnabled(true)
+          .setAutoEnterEnabled(autoEnter!!)
           .setSeamlessResizeEnabled(seamlessResize!!)
           .setActions(actions)
 

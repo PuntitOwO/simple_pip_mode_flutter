@@ -60,11 +60,12 @@ class SimplePip {
   /// Android 12 (Android S, API level 31) or newer required.
   Future<bool> setAutoPipMode({
     aspectRatio = const [16, 9],
+    autoEnter = true,
     seamlessResize = false,
   }) async {
     Map params = {
       'aspectRatio': aspectRatio,
-      'autoEnter': true,
+      'autoEnter': autoEnter,
       'seamlessResize': seamlessResize,
     };
     final bool? setSuccessfully =
