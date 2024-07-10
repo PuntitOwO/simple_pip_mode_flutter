@@ -1,125 +1,208 @@
-import 'dart:async';
+package cl.puntito.simple_pip_mode
 
-import 'package:flutter/services.dart';
-import 'package:simple_pip_mode/actions/pip_action.dart';
-import 'package:simple_pip_mode/actions/pip_actions_layout.dart';
+import android.app.Activity
+import android.app.PictureInPictureParams
+import android.app.RemoteAction
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
+import android.content.pm.PackageManager
+import android.os.Build
+import android.util.Rational
+import androidx.annotation.NonNull
+import androidx.annotation.RequiresApi
+import cl.puntito.simple_pip_mode.BuildConfig
+import cl.puntito.simple_pip_mode.Constants.EXTRA_ACTION_TYPE
+import cl.puntito.simple_pip_mode.Constants.SIMPLE_PIP_ACTION
+import cl.puntito.simple_pip_mode.actions.PipAction
+import cl.puntito.simple_pip_mode.actions.PipActionsLayout
+import io.flutter.embedding.engine.plugins.FlutterPlugin
+import io.flutter.embedding.engine.plugins.activity.ActivityAware
+import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
+import io.flutter.plugin.common.MethodCall
+import io.flutter.plugin.common.MethodChannel
+import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 
-/// Main controller class.
-/// It can verify whether the system supports PIP,
-/// check whether the app is currently in PIP mode,
-/// request entering PIP mode,
-/// and call some callbacks when the app changes its mode.
-class SimplePip {
-  static const MethodChannel _channel =
-      MethodChannel('puntito.simple_pip_mode');
 
-  /// Whether this device supports PIP mode.
-  static Future<bool> get isPipAvailable async {
-    final bool? isAvailable = await _channel.invokeMethod('isPipAvailable');
-    return isAvailable ?? false;
-  }
+/** SimplePipModePlugin */
+class SimplePipModePlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
 
-  /// Whether the device supports AutoEnter PIP parameter (Android S)
-  static Future<bool> get isAutoPipAvailable async {
-    final bool? isAvailable = await _channel.invokeMethod('isAutoPipAvailable');
-    return isAvailable ?? false;
-  }
+    /// The MethodChannel that will the communication between Flutter and native Android
+    ///
+    /// This local reference serves to register the plugin with the Flutter Engine and unregister it
+    /// when the Flutter Engine is detached from the Activity
+    private val CHANNEL = "puntito.simple_pip_mode"
+    private lateinit var channel: MethodChannel
+    private lateinit var context: Context
+    private lateinit var activity: Activity
+    private var actions: MutableList<RemoteAction> = mutableListOf()
+    private var actionsLayout: PipActionsLayout = PipActionsLayout.NONE
 
-  /// Whether the app is currently in PIP mode.
-  static Future<bool> get isPipActivated async {
-    final bool? isActivated = await _channel.invokeMethod('isPipActivated');
-    return isActivated ?? false;
-  }
+    private var callbackHelper = PipCallbackHelper()
+    private var params: PictureInPictureParams.Builder? = null
+    private var broadcastReceiver: BroadcastReceiver? = null
 
-  /// Called when the app enters PIP mode
-  VoidCallback? onPipEntered;
+    override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
+        channel = MethodChannel(flutterPluginBinding.binaryMessenger, CHANNEL)
+        callbackHelper.setChannel(channel)
+        channel.setMethodCallHandler(this)
+        context = flutterPluginBinding.applicationContext
 
-  /// Called when the app exits PIP mode
-  VoidCallback? onPipExited;
-
-  /// Called when the user taps on a PIP action
-  Function(PipAction)? onPipAction;
-
-  /// Request entering PIP mode
-  Future<bool> enterPipMode({
-    aspectRatio = const [16, 9],
-    autoEnter = false,
-    seamlessResize = false,
-  }) async {
-    Map params = {
-      'aspectRatio': aspectRatio,
-      'autoEnter': autoEnter,
-      'seamlessResize': seamlessResize,
-    };
-    final bool? enteredSuccessfully =
-        await _channel.invokeMethod('enterPipMode', params);
-    return enteredSuccessfully ?? false;
-  }
-
-  /// Request setting automatic PIP mode.
-  /// Android 12 (Android S, API level 31) or newer required.
-  Future<bool> setAutoPipMode({
-    aspectRatio = const [16, 9],
-    seamlessResize = false,
-  }) async {
-    Map params = {
-      'aspectRatio': aspectRatio,
-      'autoEnter': true,
-      'seamlessResize': seamlessResize,
-    };
-    final bool? setSuccessfully =
-        await _channel.invokeMethod('setAutoPipMode', params);
-    return setSuccessfully ?? false;
-  }
-
-  /// Updates the current actions layout with a preset layout
-  /// The preset layout is defined by [PipActionsLayout] and it's equivalent enum inside Android src
-  Future<bool> setPipActionsLayout(PipActionsLayout layout) async {
-    Map params = {'layout': layout.name};
-    final bool? setSuccessfully =
-        await _channel.invokeMethod('setPipLayout', params);
-    return setSuccessfully ?? false;
-  }
-
-  /// Updates the actions [PipAction.play] and [PipAction.pause]
-  /// When it is called it does re-render the action inside PIP acording with [isPlaying] value
-  ///
-  /// If [isPlaying] is `true` then PIP will shows [PipAction.pause] action
-  /// If [isPlaying] is `false` then PIP will shows [PipAction.play] action
-  ///
-  /// NOTE: This method should ONLY be used to update PIP action when the player state was changed by
-  /// OTHER button that is NOT the PIP's one (ex.: the player play/pause button, notification controller play/pause button
-  /// or whatever button you have that calls your playerController's play/pause). When user taps PIP's [PipAction.play] or
-  /// [PipAction.pause] it automatically updates the action, WITHOUT NEEDING to call this [setIsPlaying] method.
-  ///
-  /// Only affects media actions layout presets or presets that uses [PipAction.play] or [PipAction.pause] actions.
-  Future<bool> setIsPlaying(bool isPlaying) async {
-    Map params = {'isPlaying': isPlaying};
-    final bool? setSuccessfully =
-        await _channel.invokeMethod('setIsPlaying', params);
-    return setSuccessfully ?? false;
-  }
-
-  SimplePip({this.onPipEntered, this.onPipExited, this.onPipAction}) {
-    if (onPipEntered != null || onPipExited != null || onPipAction != null) {
-      _channel.setMethodCallHandler(
-        (call) async {
-          switch (call.method) {
-            case 'onPipEntered':
-              onPipEntered?.call();
-              break;
-            case 'onPipExited':
-              onPipExited?.call();
-              break;
-            case 'onPipAction':
-              String arg = call.arguments;
-              PipAction action =
-                  PipAction.values.firstWhere((e) => e.name == arg);
-              onPipAction?.call(action);
-              break;
-          }
-        },
-      );
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            object : BroadcastReceiver() {
+                @RequiresApi(Build.VERSION_CODES.O)
+                override fun onReceive(context: Context, intent: Intent) {
+                    if (SIMPLE_PIP_ACTION !== intent.action) {
+                        return
+                    }
+                    intent.getStringExtra(EXTRA_ACTION_TYPE)?.let {
+                        val action = PipAction.valueOf(it)
+                        action.afterAction()?.let {
+                            toggleAction(action)
+                        }
+                        callbackHelper.onPipAction(action)
+                    }
+                }
+            }.also {
+                broadcastReceiver = it
+                context.registerReceiver(it, IntentFilter(SIMPLE_PIP_ACTION), 2)
+            }
+        }
     }
-  }
+
+    override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
+        channel.setMethodCallHandler(null)
+        broadcastReceiver?.apply {
+            context.unregisterReceiver(this)
+        }
+    }
+
+    override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            result.success(false)
+            return
+        }
+
+        if (call.method == "getPlatformVersion") {
+            result.success("Android ${Build.VERSION.RELEASE}")
+        } else if (call.method == "isPipAvailable") {
+            result.success(
+                activity.packageManager.hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE)
+            )
+        } else if (call.method == "isPipActivated") {
+            result.success(activity.isInPictureInPictureMode)
+        } else if (call.method == "isAutoPipAvailable") {
+            result.success(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
+        } else if (call.method == "enterPipMode") {
+            val aspectRatio = call.argument<List<Int>>("aspectRatio")
+            val autoEnter = call.argument<Boolean>("autoEnter")
+            val seamlessResize = call.argument<Boolean>("seamlessResize")
+            var params = PictureInPictureParams.Builder()
+                .setAspectRatio(Rational(aspectRatio!![0], aspectRatio[1]))
+                .setActions(actions)
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                params = params.setAutoEnterEnabled(autoEnter!!)
+                    .setSeamlessResizeEnabled(seamlessResize!!)
+            }
+
+            this.params = params
+
+            result.success(
+                activity.enterPictureInPictureMode(params.build())
+            )
+        } else if (call.method == "setPipLayout") {
+            val success = call.argument<String>("layout")?.let {
+                try {
+                    actionsLayout = PipActionsLayout.valueOf(it.uppercase())
+                    actions = actionsLayout.remoteActions(context)
+                    true
+                } catch (e: Exception) {
+                    false
+                }
+            } ?: false
+            result.success(success)
+        } else if (call.method == "setIsPlaying") {
+            call.argument<Boolean>("isPlaying")?.let { isPlaying ->
+                if (actionsLayout.actions.contains(PipAction.PLAY) ||
+                    actionsLayout.actions.contains(PipAction.PAUSE)
+                ) {
+                    var i = actionsLayout.actions.indexOf(PipAction.PLAY)
+                    if (i == -1) {
+                        i = actionsLayout.actions.indexOf(PipAction.PAUSE)
+                    }
+                    if (i >= 0) {
+                        actionsLayout.actions[i] =
+                            if (isPlaying) PipAction.PAUSE else PipAction.PLAY
+                        renderPipActions()
+                        result.success(true)
+                    }
+                } else {
+                    result.success(false)
+                }
+            } ?: result.success(false)
+        } else if (call.method == "setAutoPipMode") {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                val aspectRatio = call.argument<List<Int>>("aspectRatio")
+                val seamlessResize = call.argument<Boolean>("seamlessResize")
+                val params = PictureInPictureParams.Builder()
+                    .setAspectRatio(Rational(aspectRatio!![0], aspectRatio[1]))
+                    .setAutoEnterEnabled(true)
+                    .setSeamlessResizeEnabled(seamlessResize!!)
+                    .setActions(actions)
+
+                this.params = params
+
+                activity.setPictureInPictureParams(params.build())
+
+                result.success(true)
+            } else {
+                result.error(
+                    "NotImplemented",
+                    "System Version less than Android S found",
+                    "Expected Android S or newer."
+                )
+            }
+        }else if (call.method == "cancelAutoEnable") {
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        activity.setPictureInPictureParams(PictureInPictureParams.Builder()
+          .setAutoEnterEnabled(false).build())
+        result.success(true)
+        return
+      }
+    } 
+         else {
+            result.notImplemented()
+        }
+    }
+
+    override fun onAttachedToActivity(binding: ActivityPluginBinding) {
+        activity = binding.activity
+    }
+
+    override fun onDetachedFromActivityForConfigChanges() {
+    }
+
+    override fun onReattachedToActivityForConfigChanges(binding: ActivityPluginBinding) {
+        activity = binding.activity
+    }
+
+    override fun onDetachedFromActivity() {
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun toggleAction(action: PipAction) {
+        actionsLayout.toggleToAfterAction(action)
+        renderPipActions()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun renderPipActions() {
+        actions = PipActionsLayout.remoteActions(context, actionsLayout.actions)
+        params?.let {
+            it.setActions(actions).build()
+            activity.setPictureInPictureParams(it.build())
+        }
+    }
 }
