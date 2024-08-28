@@ -62,7 +62,7 @@ class SimplePipModePlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
         }
       }
     }.also { broadcastReceiver = it }
-    context.registerReceiver(broadcastReceiver, IntentFilter(SIMPLE_PIP_ACTION))
+    context.registerReceiver(broadcastReceiver, IntentFilter(SIMPLE_PIP_ACTION), 4) // 4=RECEIVER_NOT_EXPORTED
   }
 
   override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
