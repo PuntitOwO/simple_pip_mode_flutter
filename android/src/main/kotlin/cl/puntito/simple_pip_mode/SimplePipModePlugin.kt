@@ -12,6 +12,8 @@ import android.os.Build
 import android.util.Rational
 import androidx.annotation.NonNull
 import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.RECEIVER_EXPORTED
 import cl.puntito.simple_pip_mode.Constants.EXTRA_ACTION_TYPE
 import cl.puntito.simple_pip_mode.Constants.SIMPLE_PIP_ACTION
 import cl.puntito.simple_pip_mode.actions.PipAction
@@ -62,7 +64,8 @@ class SimplePipModePlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
         }
       }
     }.also { broadcastReceiver = it }
-    context.registerReceiver(broadcastReceiver, IntentFilter(SIMPLE_PIP_ACTION))
+
+    ContextCompat.registerReceiver(context, broadcastReceiver, IntentFilter(SIMPLE_PIP_ACTION), RECEIVER_EXPORTED)
   }
 
   override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
@@ -76,7 +79,7 @@ class SimplePipModePlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
       result.success("Android ${Build.VERSION.RELEASE}")
     } else if (call.method == "isPipAvailable") {
       result.success(
-        activity.packageManager.hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE)
+              activity.packageManager.hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE)
       )
     } else if (call.method == "isPipActivated") {
       result.success(activity.isInPictureInPictureMode)
@@ -87,23 +90,23 @@ class SimplePipModePlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
       val autoEnter = call.argument<Boolean>("autoEnter")
       val seamlessResize = call.argument<Boolean>("seamlessResize")
       var params = PictureInPictureParams.Builder()
-        .setAspectRatio(Rational(aspectRatio!![0], aspectRatio[1]))
-        .setActions(actions)
+              .setAspectRatio(Rational(aspectRatio!![0], aspectRatio[1]))
+              .setActions(actions)
 
       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
         params = params.setAutoEnterEnabled(autoEnter!!)
-          .setSeamlessResizeEnabled(seamlessResize!!)
+                .setSeamlessResizeEnabled(seamlessResize!!)
       }
 
       this.params = params
 
       result.success(
-        activity.enterPictureInPictureMode(params.build())
+              activity.enterPictureInPictureMode(params.build())
       )
     } else if (call.method == "setPipLayout") {
       val success = call.argument<String>("layout")?.let {
         try {
-          actionsLayout = PipActionsLayout.valueOf(it.uppercase())
+          actionsLayout = PipActionsLayout.valueOf(it.uppercase().replace("_", ""))
           actions = actionsLayout.remoteActions(context)
           true
         } catch(e: Exception) {
@@ -114,7 +117,7 @@ class SimplePipModePlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
     } else if (call.method == "setIsPlaying") {
       call.argument<Boolean>("isPlaying")?.let { isPlaying ->
         if (actionsLayout.actions.contains(PipAction.PLAY) ||
-          actionsLayout.actions.contains(PipAction.PAUSE)) {
+                actionsLayout.actions.contains(PipAction.PAUSE)) {
           var i = actionsLayout.actions.indexOf(PipAction.PLAY)
           if (i == -1) {
             i = actionsLayout.actions.indexOf(PipAction.PAUSE)
@@ -131,12 +134,13 @@ class SimplePipModePlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
     } else if (call.method == "setAutoPipMode") {
       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
         val aspectRatio = call.argument<List<Int>>("aspectRatio")
+        val autoEnter = call.argument<Boolean>("autoEnter")
         val seamlessResize = call.argument<Boolean>("seamlessResize")
         val params = PictureInPictureParams.Builder()
-          .setAspectRatio(Rational(aspectRatio!![0], aspectRatio[1]))
-          .setAutoEnterEnabled(true)
-          .setSeamlessResizeEnabled(seamlessResize!!)
-          .setActions(actions)
+                .setAspectRatio(Rational(aspectRatio!![0], aspectRatio[1]))
+                .setAutoEnterEnabled(autoEnter!!)
+                .setSeamlessResizeEnabled(seamlessResize!!)
+                .setActions(actions)
 
         this.params = params
 

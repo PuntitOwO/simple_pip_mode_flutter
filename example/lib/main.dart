@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:simple_pip_mode/actions/pip_action.dart';
 import 'package:simple_pip_mode/actions/pip_actions_layout.dart';
@@ -78,7 +79,7 @@ class _ExampleAppState extends State<ExampleApp> {
         // builder is null so child is used when not in pip mode
         pipLayout: pipActionsLayout,
         onPipAction: (action) {
-          print("PIP ACTION TAP: " + action.name);
+          if (kDebugMode) print("PIP ACTION TAP: " + action.name);
           switch (action) {
             case PipAction.play:
               // example: videoPlayerController.play();
@@ -205,10 +206,10 @@ class _ExampleAppState extends State<ExampleApp> {
               ),
               pipActionsLayout != PipActionsLayout.none
                   ? Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(top: 8),
-                        child: Row(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8),
+                          child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
                               const Text("Simulated player: "),
@@ -221,17 +222,19 @@ class _ExampleAppState extends State<ExampleApp> {
                                       actionResponse = "";
                                     });
                                   },
-                                  icon: Icon(
-                                      isPlaying ? Icons.pause : Icons.play_arrow))
+                                  icon: Icon(isPlaying
+                                      ? Icons.pause
+                                      : Icons.play_arrow))
                             ],
                           ),
-                      ),
+                        ),
                         const Padding(
                           padding: EdgeInsets.all(16),
-                          child: Text("Obs.: Tap the simulated player button to see the PIP actions be updated on PIP mode, when you tap PIP actions on PIP mode it will reflect here too"),
+                          child: Text(
+                              "Obs.: Tap the simulated player button to see the PIP actions be updated on PIP mode, when you tap PIP actions on PIP mode it will reflect here too"),
                         )
-                    ],
-                  )
+                      ],
+                    )
                   : Container(),
             ],
           ),
