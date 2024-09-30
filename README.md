@@ -22,16 +22,31 @@ In the `dependencies:` section of your `pubspec.yaml`, add the following line:
   simple_pip_mode: <latest_version>
 ```
 
-# Usage
+# Table of contents
 
-This section has example code for the following tasks:
-* [Update manifest](#update-manifest)
-* [Verify PIP support](#verify-pip-support)
-* [Entering PIP mode](#entering-pip-mode)
-* [Enabling callbacks](#enabling-callbacks)
-* [Using callbacks](#using-callbacks)
-* [Using the PIP Widget](#using-the-pip-widget)
-* [Using PIP Actions](#using-pip-actions)
+- [Features](#features)
+- [Installation](#installation)
+- [Table of contents](#table-of-contents)
+- [Usage](#usage)
+  - [Update manifest](#update-manifest)
+  - [Verify pip support](#verify-pip-support)
+  - [Entering pip mode](#entering-pip-mode)
+  - [Setting automatic pip mode](#setting-automatic-pip-mode)
+  - [Enabling callbacks](#enabling-callbacks)
+    - [Activity wrapper](#activity-wrapper)
+      - [Kotlin](#kotlin)
+      - [Java](#java)
+    - [Callback helper](#callback-helper)
+      - [Kotlin](#kotlin-1)
+      - [Java](#java-1)
+  - [Using callbacks](#using-callbacks)
+  - [Using the PIP widget](#using-the-pip-widget)
+  - [Using PIP Actions](#using-pip-actions)
+- [Notes](#notes)
+  - [Multi-platform apps](#multi-platform-apps)
+- [Contribute](#contribute)
+
+# Usage
 
 ## Update manifest
 
@@ -240,6 +255,8 @@ Calling `SimplePip` methods on a non-Android device will raise a `MissingPluginE
 
 # Contribute
 
-Huge thanks to [Erick Daros](https://github.com/erickdaros) for PIP Actions feature.
+Huge thanks to:
+* [Erick Daros](https://github.com/erickdaros) for PIP Actions feature.
+* [song011794](https://github.com/song011794) for updating the plugin to Android 14.
 
-I'm currently working on more features, so issues and pull requests are appreciated!
+Issues and pull requests are appreciated!

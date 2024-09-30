@@ -1,6 +1,12 @@
+## 0.9.0
+
+* Plugin updated to support Android 14 by [song011794](https://github.com/song011794): [PR #12](https://github.com/PuntitOwO/simple_pip_mode_flutter/pull/12)
+* Actions code refactor to pass flutter static analysis.
+* README updated.
+
 ## 0.8.0
 
-* Pip Actions implemented by [Erick Daros](https://github.com/erickdaros): [Issue #5](https://github.com/PuntitOwO/simple_pip_mode_flutter/issues/5).
+* Pip Actions implemented by [Erick Daros](https://github.com/erickdaros): [PR #6](https://github.com/PuntitOwO/simple_pip_mode_flutter/pull/6).
 
 ## 0.7.1
 
