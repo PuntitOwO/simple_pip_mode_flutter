@@ -106,7 +106,7 @@ class SimplePipModePlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
     } else if (call.method == "setPipLayout") {
       val success = call.argument<String>("layout")?.let {
         try {
-          actionsLayout = PipActionsLayout.valueOf(it.uppercase())
+          actionsLayout = PipActionsLayout.valueOf(it.uppercase().replace("_", ""))
           actions = actionsLayout.remoteActions(context)
           true
         } catch(e: Exception) {

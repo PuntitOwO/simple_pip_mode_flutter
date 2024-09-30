@@ -25,7 +25,7 @@ void main() {
       final PipWidgetState state = tester.state(find.byType(PipWidget));
       SimplePip pip = state.pip;
 
-      TestDefaultBinaryMessengerBinding.instance!.defaultBinaryMessenger
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
           .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
         switch (methodCall.method) {
           case 'enterPipMode':
@@ -76,7 +76,7 @@ void main() {
       final PipWidgetState state = tester.state(find.byType(PipWidget));
       SimplePip pip = state.pip;
 
-      TestDefaultBinaryMessengerBinding.instance!.defaultBinaryMessenger
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
           .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
         switch (methodCall.method) {
           case 'enterPipMode':
