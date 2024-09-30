@@ -136,11 +136,12 @@ class SimplePipModePlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
         val aspectRatio = call.argument<List<Int>>("aspectRatio")
         val autoEnter = call.argument<Boolean>("autoEnter")
         val seamlessResize = call.argument<Boolean>("seamlessResize")
+        val autoEnter = call.argument<Boolean>("autoEnter")
         val params = PictureInPictureParams.Builder()
-                .setAspectRatio(Rational(aspectRatio!![0], aspectRatio[1]))
-                .setAutoEnterEnabled(autoEnter!!)
-                .setSeamlessResizeEnabled(seamlessResize!!)
-                .setActions(actions)
+          .setAspectRatio(Rational(aspectRatio!![0], aspectRatio[1]))
+          .setAutoEnterEnabled(autoEnter)
+          .setSeamlessResizeEnabled(seamlessResize!!)
+          .setActions(actions)
 
         this.params = params
 
