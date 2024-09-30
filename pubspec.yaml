@@ -4,7 +4,7 @@ version: 0.8.0
 repository: https://github.com/PuntitOwO/simple_pip_mode_flutter
 
 environment:
-  sdk: ">=2.16.0 <3.0.0"
+  sdk: ">=2.16.0 <=3.5.3"
   flutter: ">=2.5.0"
 
 dependencies:
