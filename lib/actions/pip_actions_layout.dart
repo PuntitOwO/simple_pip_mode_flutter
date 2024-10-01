@@ -4,12 +4,10 @@
 /// specified the actions each layout should show.
 ///
 ///
-///
 /// [none] do not show any actions on PIP mode
 /// [media] shows `previous`, `pause/play`, `next` actions (on this specific order)
 /// [mediaOnlyPause] shows only `pause/play` action
 /// [mediaLive] shows `live` and `pause/play` actions (on this specific order)
-
 enum PipActionsLayout {
   none,
   media,
