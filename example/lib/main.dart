@@ -177,8 +177,8 @@ class _ExampleAppState extends State<ExampleApp> {
                               });
                             },
                             isSelected: isPlaying,
-                            icon: Icon(Icons.play_arrow),
-                            selectedIcon: Icon(Icons.pause),
+                            icon: const Icon(Icons.play_arrow),
+                            selectedIcon: const Icon(Icons.pause),
                           ),
                         ],
                       ),

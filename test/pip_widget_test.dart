@@ -16,9 +16,9 @@ void main() {
         MaterialApp(
           home: PipWidget(
             builder: (_) => const Text('builder'),
-            child: const Text('child'),
             pipBuilder: (_) => const Text('pipbuilder'),
             pipChild: const Text('pipchild'),
+            child: const Text('child'),
           ),
         ),
       );
@@ -68,8 +68,8 @@ void main() {
       await tester.pumpWidget(
         const MaterialApp(
           home: PipWidget(
-            child: Text('child'),
             pipChild: Text('pipchild'),
+            child: Text('child'),
           ),
         ),
       );

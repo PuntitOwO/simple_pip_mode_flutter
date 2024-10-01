@@ -28,7 +28,7 @@ class PipWidget extends StatefulWidget {
   final Widget? pipChild;
   final PipActionsLayout pipLayout;
   const PipWidget({
-    Key? key,
+    super.key,
     this.onPipEntered,
     this.onPipExited,
     this.onPipAction,
@@ -36,10 +36,9 @@ class PipWidget extends StatefulWidget {
     this.child,
     this.pipBuilder,
     this.pipChild,
-    this.pipLayout = PipActionsLayout.none
+    this.pipLayout = PipActionsLayout.none,
   })  : assert(child != null || builder != null),
-        assert(pipChild != null || pipBuilder != null),
-        super(key: key);
+        assert(pipChild != null || pipBuilder != null);
 
   @override
   PipWidgetState createState() => PipWidgetState();
@@ -56,10 +55,9 @@ class PipWidgetState extends State<PipWidget> {
   void initState() {
     super.initState();
     pip = SimplePip(
-      onPipEntered: onPipEntered,
-      onPipExited: onPipExited,
-      onPipAction: onPipAction
-    );
+        onPipEntered: onPipEntered,
+        onPipExited: onPipExited,
+        onPipAction: onPipAction);
     pip.setPipActionsLayout(widget.pipLayout);
   }
 
@@ -79,7 +77,7 @@ class PipWidgetState extends State<PipWidget> {
     widget.onPipExited?.call();
   }
 
-  /// The user taps one PIP action 
+  /// The user taps one PIP action
   void onPipAction(PipAction action) {
     widget.onPipAction?.call(action);
   }
