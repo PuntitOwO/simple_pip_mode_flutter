@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:simple_pip_mode/actions/pip_action.dart';
 import 'package:simple_pip_mode/actions/pip_actions_layout.dart';
+import 'package:simple_pip_mode/aspect_ratio.dart';
 
 /// Main controller class.
 /// It can verify whether the system supports PIP,
@@ -42,12 +43,12 @@ class SimplePip {
 
   /// Request entering PIP mode
   Future<bool> enterPipMode({
-    aspectRatio = const [16, 9],
-    autoEnter = false,
-    seamlessResize = false,
+    AspectRatio aspectRatio = const (16, 9),
+    bool autoEnter = false,
+    bool seamlessResize = false,
   }) async {
     Map params = {
-      'aspectRatio': aspectRatio,
+      'aspectRatio': aspectRatio.asList,
       'autoEnter': autoEnter,
       'seamlessResize': seamlessResize,
     };
@@ -59,12 +60,12 @@ class SimplePip {
   /// Request setting automatic PIP mode.
   /// Android 12 (Android S, API level 31) or newer required.
   Future<bool> setAutoPipMode({
-    aspectRatio = const [16, 9],
+    AspectRatio aspectRatio = const (16, 9),
     bool seamlessResize = false,
     bool autoEnter = true,
   }) async {
     Map params = {
-      'aspectRatio': aspectRatio,
+      'aspectRatio': aspectRatio.asList,
       'autoEnter': autoEnter,
       'seamlessResize': seamlessResize,
     };

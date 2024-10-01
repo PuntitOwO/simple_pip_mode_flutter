@@ -1,19 +1,21 @@
+// ignore_for_file: sort_child_properties_last
+
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide AspectRatio;
 import 'package:simple_pip_mode/actions/pip_action.dart';
 import 'package:simple_pip_mode/actions/pip_actions_layout.dart';
-import 'dart:async';
+import 'package:simple_pip_mode/aspect_ratio.dart';
 
 import 'package:simple_pip_mode/simple_pip.dart'; // To enter pip mode and receive callbacks
 import 'package:simple_pip_mode/pip_widget.dart'; // To build pip mode dependent layouts
 
 /// Some aspect ratio presets to choose
 const aspectRatios = [
-  [1, 1],
-  [2, 3],
-  [3, 2],
-  [16, 9],
-  [9, 16],
+  (1, 1),
+  (2, 3),
+  (3, 2),
+  (16, 9),
+  (9, 16),
 ];
 
 void main() {
@@ -24,7 +26,7 @@ void main() {
 
 /// Example App to show usage of PIP mode
 class ExampleApp extends StatefulWidget {
-  const ExampleApp({Key? key}) : super(key: key);
+  const ExampleApp({super.key});
 
   @override
   State<ExampleApp> createState() => _ExampleAppState();
@@ -32,7 +34,7 @@ class ExampleApp extends StatefulWidget {
 
 class _ExampleAppState extends State<ExampleApp> {
   bool pipAvailable = false;
-  List<int> aspectRatio = aspectRatios.first;
+  AspectRatio aspectRatio = aspectRatios.first;
   bool autoPipAvailable = false;
   bool autoPipSwitch = false;
   late SimplePip pip;
@@ -60,12 +62,25 @@ class _ExampleAppState extends State<ExampleApp> {
     });
   }
 
-  List<DropdownMenuItem<PipActionsLayout>> layoutList() {
+  /// List of available layouts
+  List<DropdownMenuItem<PipActionsLayout>> get layoutList {
     return PipActionsLayout.values
         .map<DropdownMenuItem<PipActionsLayout>>(
-          (PipActionsLayout value) => DropdownMenuItem<PipActionsLayout>(
-            child: Text(value.name),
-            value: value,
+          (PipActionsLayout layout) => DropdownMenuItem<PipActionsLayout>(
+            value: layout,
+            child: Text(layout.name),
+          ),
+        )
+        .toList();
+  }
+
+  /// List of available aspect ratio presets
+  List<DropdownMenuItem<AspectRatio>> get aspectRatioList {
+    return aspectRatios
+        .map<DropdownMenuItem<AspectRatio>>(
+          (AspectRatio ratio) => DropdownMenuItem<AspectRatio>(
+            value: ratio,
+            child: Text(ratio.name),
           ),
         )
         .toList();
@@ -78,78 +93,37 @@ class _ExampleAppState extends State<ExampleApp> {
       home: PipWidget(
         // builder is null so child is used when not in pip mode
         pipLayout: pipActionsLayout,
-        onPipAction: (action) {
-          if (kDebugMode) print("PIP ACTION TAP: " + action.name);
-          switch (action) {
-            case PipAction.play:
-              // example: videoPlayerController.play();
-              setState(() {
-                isPlaying = true;
-                actionResponse = "Playing";
-              });
-              break;
-            case PipAction.pause:
-              // example: videoPlayerController.pause();
-              setState(() {
-                isPlaying = false;
-                actionResponse = "Paused";
-              });
-              break;
-            case PipAction.live:
-              // example: videoPlayerController.forceLive();
-              setState(() {
-                actionResponse = "Go to live view";
-              });
-              break;
-            case PipAction.next:
-              // example: videoPlayerController.next();
-              setState(() {
-                actionResponse = "Next";
-              });
-              break;
-            case PipAction.previous:
-              // example: videoPlayerController.previous();
-              setState(() {
-                actionResponse = "Previous";
-              });
-              break;
-            default:
-              break;
-          }
-        },
+        onPipAction: _handlePipAction,
         child: Scaffold(
-          appBar: AppBar(
-            title: const Text('Pip Plugin example app'),
-          ),
+          appBar: AppBar(title: const Text('PiP Plugin example app')),
           body: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const SizedBox(width: double.infinity),
-              Text('Pip is ${pipAvailable ? '' : 'not '}Available'),
-              const Text('Pip is not activated'),
-              DropdownButton<List<int>>(
-                value: aspectRatio,
-                onChanged: (List<int>? newValue) {
-                  if (newValue == null) return;
-                  if (autoPipSwitch) {
-                    pip.setAutoPipMode(
-                      aspectRatio: newValue,
-                      seamlessResize: true,
-                    );
-                  }
-                  setState(() {
-                    aspectRatio = newValue;
-                  });
-                },
-                items: aspectRatios
-                    .map<DropdownMenuItem<List<int>>>(
-                      (List<int> value) => DropdownMenuItem<List<int>>(
-                        child: Text('${value.first} : ${value.last}'),
-                        value: value,
-                      ),
-                    )
-                    .toList(),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text('PiP Available: '),
+                  Icon(pipAvailable ? Icons.check : Icons.close),
+                ],
+              ),
+              const Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text('PiP Activated: '),
+                  Icon(Icons.close),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text('Aspect ratio: '),
+                  DropdownButton<AspectRatio>(
+                    value: aspectRatio,
+                    onChanged: _handleAspectRatioSelection,
+                    items: aspectRatioList,
+                  ),
+                ],
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -157,29 +131,17 @@ class _ExampleAppState extends State<ExampleApp> {
                   const Text('Auto Enter (Android S): '),
                   Switch(
                     value: autoPipSwitch,
-                    onChanged: autoPipAvailable
-                        ? (newValue) {
-                            setState(() {
-                              autoPipSwitch = newValue;
-                            });
-                          }
-                        : null,
+                    onChanged: autoPipAvailable ? _handleAutoSwitch : null,
                   ),
                 ],
               ),
               IconButton(
-                onPressed: pipAvailable
-                    ? () => pip.enterPipMode(
-                          aspectRatio: aspectRatio,
-                        )
-                    : null,
+                onPressed: pipAvailable ? _handleEnterPip : null,
                 icon: const Icon(Icons.picture_in_picture),
               ),
               const Padding(
                 padding: EdgeInsets.symmetric(vertical: 20),
-                child: Divider(
-                  thickness: 1,
-                ),
+                child: Divider(thickness: 1),
               ),
               const Text("PIP Actions:"),
               Padding(
@@ -190,84 +152,139 @@ class _ExampleAppState extends State<ExampleApp> {
                     const Text("Current actions layout: "),
                     DropdownButton<PipActionsLayout>(
                       value: pipActionsLayout,
-                      onChanged: (PipActionsLayout? newValue) {
-                        if (newValue == null) return;
-                        pip.setPipActionsLayout(newValue);
-                        pip.setIsPlaying(true);
-                        setState(() {
-                          isPlaying = true;
-                          pipActionsLayout = newValue;
-                        });
-                      },
-                      items: layoutList(),
+                      onChanged: _handlePipActionsLayoutSelection,
+                      items: layoutList,
                     ),
                   ],
                 ),
               ),
-              pipActionsLayout != PipActionsLayout.none
-                  ? Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              const Text("Simulated player: "),
-                              IconButton(
-                                  onPressed: () {
-                                    bool newValue = !isPlaying;
-                                    pip.setIsPlaying(newValue);
-                                    setState(() {
-                                      isPlaying = newValue;
-                                      actionResponse = "";
-                                    });
-                                  },
-                                  icon: Icon(isPlaying
-                                      ? Icons.pause
-                                      : Icons.play_arrow))
-                            ],
+              if (pipActionsLayout != PipActionsLayout.none)
+                Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          const Text("Simulated player: "),
+                          IconButton(
+                            onPressed: _handleSimulatedPlayerToggle,
+                            isSelected: isPlaying,
+                            icon: Icon(Icons.play_arrow),
+                            selectedIcon: Icon(Icons.pause),
                           ),
-                        ),
-                        const Padding(
-                          padding: EdgeInsets.all(16),
-                          child: Text(
-                              "Obs.: Tap the simulated player button to see the PIP actions be updated on PIP mode, when you tap PIP actions on PIP mode it will reflect here too"),
-                        )
-                      ],
-                    )
-                  : Container(),
+                        ],
+                      ),
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.all(16),
+                      child: Text(
+                        "Obs.: "
+                        "Tap the simulated player button to see the PIP "
+                        "actions be updated on PIP mode, when you tap PIP "
+                        "actions on PIP mode it will reflect here too",
+                      ),
+                    ),
+                  ],
+                ),
             ],
           ),
         ),
         // pip builder is null so pip child is used when in pip mode
         pipChild: Scaffold(
-          appBar: AppBar(
-            title: const Text('Pip Mode'),
-          ),
+          appBar: AppBar(title: const Text('Pip Mode')),
           body: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const SizedBox(width: double.infinity),
+              const SizedBox(width: double.maxFinite),
               const Text('Pip activated'),
-              pipActionsLayout != PipActionsLayout.none
-                  ? IconButton(
-                      onPressed: () {
-                        bool newValue = !isPlaying;
-                        pip.setIsPlaying(newValue);
-                        setState(() {
-                          isPlaying = newValue;
-                        });
-                      },
-                      icon: Icon(isPlaying ? Icons.pause : Icons.play_arrow))
-                  : Container(),
-              pipActionsLayout != PipActionsLayout.none
-                  ? Text(actionResponse)
-                  : Container(),
+              if (pipActionsLayout != PipActionsLayout.none) ...[
+                Icon(isPlaying ? Icons.pause : Icons.play_arrow),
+                Text(actionResponse),
+              ]
             ],
           ),
         ),
       ),
     );
+  }
+
+  void _handleSimulatedPlayerToggle() {
+    bool newValue = !isPlaying;
+    pip.setIsPlaying(newValue);
+    setState(() {
+      isPlaying = newValue;
+      actionResponse = "";
+    });
+  }
+
+  void _handlePipActionsLayoutSelection(PipActionsLayout? newValue) {
+    if (newValue == null) return;
+    pip.setPipActionsLayout(newValue);
+    pip.setIsPlaying(true);
+    setState(() {
+      isPlaying = true;
+      pipActionsLayout = newValue;
+    });
+  }
+
+  _handleEnterPip() => pip.enterPipMode(
+        aspectRatio: aspectRatio,
+        autoEnter: autoPipSwitch,
+        seamlessResize: autoPipSwitch,
+      );
+
+  _handleAutoSwitch(newValue) {
+    pip.setAutoPipMode(
+      aspectRatio: aspectRatio,
+      autoEnter: newValue,
+      seamlessResize: newValue,
+    );
+    setState(() => autoPipSwitch = newValue);
+  }
+
+  void _handleAspectRatioSelection(AspectRatio? newValue) {
+    if (newValue == null) return;
+    pip.setAutoPipMode(
+      aspectRatio: newValue,
+      autoEnter: autoPipSwitch,
+      seamlessResize: autoPipSwitch,
+    );
+    setState(() => aspectRatio = newValue);
+  }
+
+  _handlePipAction(action) {
+    if (kDebugMode) print("PIP ACTION TAP: ${action.name}");
+    switch (action) {
+      case PipAction.play:
+        // example: videoPlayerController.play();
+        setState(() {
+          isPlaying = true;
+          actionResponse = "Playing";
+        });
+        break;
+      case PipAction.pause:
+        // example: videoPlayerController.pause();
+        setState(() {
+          isPlaying = false;
+          actionResponse = "Paused";
+        });
+        break;
+      case PipAction.live:
+        // example: videoPlayerController.forceLive();
+        setState(() => actionResponse = "Go to live view");
+        break;
+      case PipAction.next:
+        // example: videoPlayerController.next();
+        setState(() => actionResponse = "Next");
+        break;
+      case PipAction.previous:
+        // example: videoPlayerController.previous();
+        setState(() => actionResponse = "Previous");
+        break;
+      default:
+        break;
+    }
   }
 }
