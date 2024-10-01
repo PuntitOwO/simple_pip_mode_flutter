@@ -258,5 +258,6 @@ Calling `SimplePip` methods on a non-Android device will raise a `MissingPluginE
 Huge thanks to:
 * [Erick Daros](https://github.com/erickdaros) for PIP Actions feature.
 * [song011794](https://github.com/song011794) for updating the plugin to Android 14.
+* [af-ffr](https://github.com/af-ffr) for updating the plugin to add auto enter parameter.
 
 Issues and pull requests are appreciated!
