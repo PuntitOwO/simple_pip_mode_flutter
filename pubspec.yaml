@@ -1,11 +1,11 @@
 name: simple_pip_mode
 description: A complete Picture-In-Picutre mode plugin (Android support only)
-version: 0.9.0
+version: 1.0.0
 repository: https://github.com/PuntitOwO/simple_pip_mode_flutter
 
 environment:
-  sdk: ">=2.16.0 <=3.5.3"
-  flutter: ">=2.5.0"
+  sdk: "^3.0.0"
+  flutter: "^3.0.0"
 
 dependencies:
   flutter:
@@ -14,7 +14,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^1.0.0
+  flutter_lints: ^5.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

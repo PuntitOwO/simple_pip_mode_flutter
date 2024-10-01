@@ -1,9 +1,10 @@
-## 0.9.0
+## 1.0.0
 
 * Android 14 support by [song011794](https://github.com/song011794): [PR #12](https://github.com/PuntitOwO/simple_pip_mode_flutter/pull/12)
 * Add auto enter parameter to `setAutoPipMode` by [af-ffr](https://github.com/af-ffr): [PR #8](https://github.com/PuntitOwO/simple_pip_mode_flutter/pull/8)
 * Actions code refactor to pass flutter static analysis.
-* README updated.
+* Dependencies updated.
+* Clean up code.
 
 ## 0.8.0
 
