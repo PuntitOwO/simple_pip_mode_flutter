@@ -3,6 +3,7 @@
 * Android 14 support by [song011794](https://github.com/song011794): [PR #12](https://github.com/PuntitOwO/simple_pip_mode_flutter/pull/12)
 * Add auto enter parameter to `setAutoPipMode` by [af-ffr](https://github.com/af-ffr): [PR #8](https://github.com/PuntitOwO/simple_pip_mode_flutter/pull/8)
 * Add `AspectRatio` record type.
+* Update README.md to inlcude updated videos of new features.
 * Actions code refactor to pass flutter static analysis.
 * Dependencies updated.
 * Refactor example app.
