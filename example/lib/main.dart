@@ -168,7 +168,14 @@ class _ExampleAppState extends State<ExampleApp> {
                         children: [
                           const Text("Simulated player: "),
                           IconButton(
-                            onPressed: _handleSimulatedPlayerToggle,
+                            onPressed: () {
+                              bool newValue = !isPlaying;
+                              pip.setIsPlaying(newValue);
+                              setState(() {
+                                isPlaying = newValue;
+                                actionResponse = "";
+                              });
+                            },
                             isSelected: isPlaying,
                             icon: Icon(Icons.play_arrow),
                             selectedIcon: Icon(Icons.pause),
@@ -198,7 +205,7 @@ class _ExampleAppState extends State<ExampleApp> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const SizedBox(width: double.maxFinite),
-              const Text('Pip activated'),
+              const Text('PiP activated'),
               if (pipActionsLayout != PipActionsLayout.none) ...[
                 Icon(isPlaying ? Icons.pause : Icons.play_arrow),
                 Text(actionResponse),
@@ -208,15 +215,6 @@ class _ExampleAppState extends State<ExampleApp> {
         ),
       ),
     );
-  }
-
-  void _handleSimulatedPlayerToggle() {
-    bool newValue = !isPlaying;
-    pip.setIsPlaying(newValue);
-    setState(() {
-      isPlaying = newValue;
-      actionResponse = "";
-    });
   }
 
   void _handlePipActionsLayoutSelection(PipActionsLayout? newValue) {
@@ -229,13 +227,13 @@ class _ExampleAppState extends State<ExampleApp> {
     });
   }
 
-  _handleEnterPip() => pip.enterPipMode(
+  void _handleEnterPip() => pip.enterPipMode(
         aspectRatio: aspectRatio,
         autoEnter: autoPipSwitch,
         seamlessResize: autoPipSwitch,
       );
 
-  _handleAutoSwitch(newValue) {
+  void _handleAutoSwitch(newValue) {
     pip.setAutoPipMode(
       aspectRatio: aspectRatio,
       autoEnter: newValue,
@@ -254,7 +252,7 @@ class _ExampleAppState extends State<ExampleApp> {
     setState(() => aspectRatio = newValue);
   }
 
-  _handlePipAction(action) {
+  void _handlePipAction(PipAction action) {
     if (kDebugMode) print("PIP ACTION TAP: ${action.name}");
     switch (action) {
       case PipAction.play:
@@ -263,28 +261,21 @@ class _ExampleAppState extends State<ExampleApp> {
           isPlaying = true;
           actionResponse = "Playing";
         });
-        break;
       case PipAction.pause:
         // example: videoPlayerController.pause();
         setState(() {
           isPlaying = false;
           actionResponse = "Paused";
         });
-        break;
       case PipAction.live:
         // example: videoPlayerController.forceLive();
         setState(() => actionResponse = "Go to live view");
-        break;
       case PipAction.next:
         // example: videoPlayerController.next();
         setState(() => actionResponse = "Next");
-        break;
       case PipAction.previous:
         // example: videoPlayerController.previous();
         setState(() => actionResponse = "Previous");
-        break;
-      default:
-        break;
     }
   }
 }
