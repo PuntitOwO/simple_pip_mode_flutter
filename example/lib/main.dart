@@ -5,9 +5,8 @@ import 'package:flutter/material.dart' hide AspectRatio;
 import 'package:simple_pip_mode/actions/pip_action.dart';
 import 'package:simple_pip_mode/actions/pip_actions_layout.dart';
 import 'package:simple_pip_mode/aspect_ratio.dart';
-
-import 'package:simple_pip_mode/simple_pip.dart'; // To enter pip mode and receive callbacks
 import 'package:simple_pip_mode/pip_widget.dart'; // To build pip mode dependent layouts
+import 'package:simple_pip_mode/simple_pip.dart'; // To enter pip mode and receive callbacks
 
 /// Some aspect ratio presets to choose
 const aspectRatios = [
@@ -276,6 +275,12 @@ class _ExampleAppState extends State<ExampleApp> {
       case PipAction.previous:
         // example: videoPlayerController.previous();
         setState(() => actionResponse = "Previous");
+      case PipAction.rewind:
+        // example: videoPlayerController.seek(-10);
+        setState(() => actionResponse = "Rewind");
+      case PipAction.forward:
+        // example: videoPlayerController.seek(10);
+        setState(() => actionResponse = "Forward");
     }
   }
 }
