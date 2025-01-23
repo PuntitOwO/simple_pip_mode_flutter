@@ -11,8 +11,7 @@ import 'package:simple_pip_mode/aspect_ratio.dart';
 /// request entering PIP mode,
 /// and call some callbacks when the app changes its mode.
 class SimplePip {
-  static const MethodChannel _channel =
-      MethodChannel('puntito.simple_pip_mode');
+  static const _channel = MethodChannel('puntito.simple_pip_mode');
 
   /// Whether this device supports PIP mode.
   static Future<bool> get isPipAvailable async {
@@ -39,7 +38,7 @@ class SimplePip {
   VoidCallback? onPipExited;
 
   /// Called when the user taps on a PIP action
-  Function(PipAction)? onPipAction;
+  void Function(PipAction)? onPipAction;
 
   /// Request entering PIP mode
   Future<bool> enterPipMode({
@@ -109,16 +108,13 @@ class SimplePip {
           switch (call.method) {
             case 'onPipEntered':
               onPipEntered?.call();
-              break;
             case 'onPipExited':
               onPipExited?.call();
-              break;
             case 'onPipAction':
               String arg = call.arguments;
               PipAction action =
                   PipAction.values.firstWhere((e) => e.name == arg);
               onPipAction?.call(action);
-              break;
           }
         },
       );
