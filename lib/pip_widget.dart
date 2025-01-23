@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use_from_same_package
+
 import 'package:flutter/material.dart';
 import 'package:simple_pip_mode/actions/pip_action.dart';
 import 'package:simple_pip_mode/actions/pip_actions_layout.dart';
@@ -22,8 +24,16 @@ class PipWidget extends StatefulWidget {
   final VoidCallback? onPipEntered;
   final VoidCallback? onPipExited;
   final Function(PipAction)? onPipAction;
+  @Deprecated(
+    'Use a Builder widget as the child instead. '
+    'This field will be removed in v2.0.0.',
+  )
   final Widget Function(BuildContext)? builder;
   final Widget? child;
+  @Deprecated(
+    'Use a Builder widget as the pipChild instead. '
+    'This field will be removed in v2.0.0.',
+  )
   final Widget Function(BuildContext)? pipBuilder;
   final Widget? pipChild;
   final PipActionsLayout pipLayout;
@@ -51,41 +61,41 @@ class PipWidgetState extends State<PipWidget> {
   /// Whether the app is currently in PIP mode
   bool _pipMode = false;
 
+  Widget? get builder =>
+      widget.builder != null ? Builder(builder: widget.builder!) : null;
+  Widget? get pipBuilder =>
+      widget.pipBuilder != null ? Builder(builder: widget.pipBuilder!) : null;
+
   @override
   void initState() {
     super.initState();
     pip = SimplePip(
-        onPipEntered: onPipEntered,
-        onPipExited: onPipExited,
-        onPipAction: onPipAction);
+      onPipEntered: onPipEntered,
+      onPipExited: onPipExited,
+      onPipAction: onPipAction,
+    );
     pip.setPipActionsLayout(widget.pipLayout);
   }
 
   /// The app entered PIP mode
   void onPipEntered() {
-    setState(() {
-      _pipMode = true;
-    });
+    setState(() => _pipMode = true);
     widget.onPipEntered?.call();
   }
 
   /// The app exited PIP mode
   void onPipExited() {
-    setState(() {
-      _pipMode = false;
-    });
+    setState(() => _pipMode = false);
     widget.onPipExited?.call();
   }
 
   /// The user taps one PIP action
-  void onPipAction(PipAction action) {
-    widget.onPipAction?.call(action);
-  }
+  void onPipAction(PipAction action) => widget.onPipAction?.call(action);
 
   @override
   Widget build(BuildContext context) {
     return _pipMode
-        ? (widget.pipBuilder?.call(context) ?? widget.pipChild!)
-        : (widget.builder?.call(context) ?? widget.child!);
+        ? (pipBuilder ?? widget.pipChild!)
+        : (builder ?? widget.child!);
   }
 }
