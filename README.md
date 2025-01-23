@@ -208,7 +208,7 @@ You can also pass callbacks directly to `PipWidget`.
 ## Using PIP Actions
 
 To use PIP actions, you need to specify a `pipLayout` preset on your `PipWidget`. 
-The current available action layout presets are focused on giving support to media reproduction controls. They are `media`, `media_only_pause` and `media_live`. Those are defined on the `[PipActionsLayout]` enum.
+The current available action layout presets are focused on giving support to media reproduction controls. They are `media`, `media_only_pause`, `media_live` and `mediaWithSeek10`. Those are defined on the `[PipActionsLayout]` enum.
 
 You can also add a `onPipAction` listener to handle actions callbacks from `PipWidget`. This can be defined on `SimplePip(onPipAction: ...)` too.
 ```dart
@@ -232,6 +232,11 @@ class MyWidget extends StatelessWidget {
             // example: videoPlayerController.next();
           case PipAction.previous:
             // example: videoPlayerController.previous();
+          case PipAction.rewind:
+            // example: videoPlayerController.seek(-10);
+          case PipAction.forward:
+            // example: videoPlayerController.seek(10);
+        setState(() => actionResponse = "Forward")
           default:
             break;
         }

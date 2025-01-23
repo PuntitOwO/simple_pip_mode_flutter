@@ -17,6 +17,8 @@ enum PipAction {
   previous,
   next,
   live,
+  rewind,
+  forward,
 }
 
 // TODO(PuntitOwO): Create implement generic actions on runtime, so plugin users can create theirs own actions without needing to update this preset

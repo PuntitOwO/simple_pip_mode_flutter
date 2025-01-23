@@ -27,6 +27,7 @@ apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 android {
     compileSdkVersion flutter.compileSdkVersion
+    namespace 'cl.puntito.simple_pip_mode_example'
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -43,6 +44,7 @@ android {
 
     defaultConfig {
         applicationId "cl.puntito.simple_pip_mode_example"
+        namespace 'cl.puntito.simple_pip_mode_example'
         minSdkVersion flutter.minSdkVersion
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
