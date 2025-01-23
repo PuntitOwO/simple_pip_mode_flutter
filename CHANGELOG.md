@@ -1,3 +1,10 @@
+## 1.1.0
+
+* Fix namespace issue and add a new media action preset by [kmartins](https://github.com/kmartins): [PR #21](https://github.com/PuntitOwO/simple_pip_mode_flutter/pull/21)
+* Add deprecation warning to `PipWidget.builder` and `PipWidget.pipBuilder` parameters. They will be removed in v2.0.0.
+* Refactor native code method dispatcher to separate methods for each method call.
+* Update README.md to include new features and deprecation warning.
+
 ## 1.0.0
 
 * Android 14 support by [song011794](https://github.com/song011794): [PR #12](https://github.com/PuntitOwO/simple_pip_mode_flutter/pull/12)

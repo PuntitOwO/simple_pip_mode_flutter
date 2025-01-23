@@ -101,7 +101,7 @@ This way, when user presses home (or uses home gesture), the app enters PIP mode
 
 There's two ways of enabling callbacks:
 * [Activity wrapper](#activity-wrapper) (Recommended!)
-* [Callback helper](#callback-helper)
+* [Callback helper](#callback-helper) (The old, manual way)
 
 ### Activity wrapper 
 
@@ -189,16 +189,18 @@ SimplePip _pip = SimplePip(
 To use the widget, you need to [enable callbacks](#enabling-callbacks) first.
 Import `pip_widget.dart` file. 
 
-Add a `PipWidget` widget to your tree and give it a `builder` or a `child`, and a `pipBuilder` or a `pipChild`.
+Add a `PipWidget` widget to your tree and give it a `child` and a `pipChild`.
+
+> [!Note]
+> `builder` and `pipBuilder` are deprecated. Use a `Builder` as the `child` or `pipChild` instead.
+
 ```dart
 import 'package:simple_pip_mode/pip_widget.dart';
 class MyWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return PipWidget(
-      builder: (context) => Text('This is built when PIP mode is not active'),
-      child: Text('This widget is not used because builder is not null'),
-      //pipBuilder: (context) => Text('This is built when PIP mode is active'),
-      pipChild: Text('This widget is used because pipBuilder is null'),
+      child: Text('This is built when PIP mode is not active'),
+      pipChild: Text('This is built when PIP mode is active'),
     );
   }
 }
@@ -224,10 +226,8 @@ class MyWidget extends StatelessWidget {
         switch (action) {
           case PipAction.play:
             // example: videoPlayerController.play();
-            break;
           case PipAction.pause:
             // example: videoPlayerController.pause();
-            break;
           case PipAction.next:
             // example: videoPlayerController.next();
           case PipAction.previous:
@@ -236,7 +236,6 @@ class MyWidget extends StatelessWidget {
             // example: videoPlayerController.seek(-10);
           case PipAction.forward:
             // example: videoPlayerController.seek(10);
-        setState(() => actionResponse = "Forward")
           default:
             break;
         }
@@ -268,5 +267,6 @@ Huge thanks to:
 * [Erick Daros](https://github.com/erickdaros) for PIP Actions feature.
 * [song011794](https://github.com/song011794) for updating the plugin to Android 14.
 * [af-ffr](https://github.com/af-ffr) for updating the plugin to add auto enter parameter.
+* [kmartins](https://github.com/kmartins) for updating the plugin to add more actions.
 
 Issues and pull requests are appreciated!
