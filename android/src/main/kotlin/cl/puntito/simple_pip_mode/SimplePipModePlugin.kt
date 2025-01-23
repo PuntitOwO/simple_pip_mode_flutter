@@ -27,6 +27,18 @@ import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 
 
+/** PIP_METHODS enum */
+enum class PIP_METHODS(val methodName: String) {
+    GET_PLATFORM_VERSION("getPlatformVersion"),
+    IS_PIP_AVAILABLE("isPipAvailable"),
+    IS_PIP_ACTIVATED("isPipActivated"),
+    IS_AUTO_PIP_AVAILABLE("isAutoPipAvailable"),
+    ENTER_PIP_MODE("enterPipMode"),
+    SET_PIP_LAYOUT("setPipLayout"),
+    SET_IS_PLAYING("setIsPlaying"),
+    SET_AUTO_PIP_MODE("setAutoPipMode"),
+}
+
 /** SimplePipModePlugin */
 class SimplePipModePlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
 
@@ -81,90 +93,16 @@ class SimplePipModePlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
-        if (call.method == "getPlatformVersion") {
-            result.success("Android ${Build.VERSION.RELEASE}")
-        } else if (call.method == "isPipAvailable") {
-            result.success(
-                activity.packageManager.hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE)
-            )
-        } else if (call.method == "isPipActivated") {
-            result.success(activity.isInPictureInPictureMode)
-        } else if (call.method == "isAutoPipAvailable") {
-            result.success(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
-        } else if (call.method == "enterPipMode") {
-            val aspectRatio = call.argument<List<Int>>("aspectRatio")
-            val autoEnter = call.argument<Boolean>("autoEnter")
-            val seamlessResize = call.argument<Boolean>("seamlessResize")
-            var params = PictureInPictureParams.Builder()
-                .setAspectRatio(Rational(aspectRatio!![0], aspectRatio[1]))
-                .setActions(actions)
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                params = params.setAutoEnterEnabled(autoEnter!!)
-                    .setSeamlessResizeEnabled(seamlessResize!!)
-            }
-
-            this.params = params
-
-            result.success(
-                activity.enterPictureInPictureMode(params.build())
-            )
-        } else if (call.method == "setPipLayout") {
-            val success = call.argument<String>("layout")?.let {
-                try {
-                    Log.e("PIP", convertAction(it))
-                    actionsLayout = PipActionsLayout.valueOf(convertAction(it))
-                    actions = actionsLayout.remoteActions(context)
-                    true
-                } catch (e: Exception) {
-                    false
-                }
-            } ?: false
-            result.success(success)
-        } else if (call.method == "setIsPlaying") {
-            call.argument<Boolean>("isPlaying")?.let { isPlaying ->
-                if (actionsLayout.actions.contains(PipAction.PLAY) ||
-                    actionsLayout.actions.contains(PipAction.PAUSE)
-                ) {
-                    var i = actionsLayout.actions.indexOf(PipAction.PLAY)
-                    if (i == -1) {
-                        i = actionsLayout.actions.indexOf(PipAction.PAUSE)
-                    }
-                    if (i >= 0) {
-                        actionsLayout.actions[i] =
-                            if (isPlaying) PipAction.PAUSE else PipAction.PLAY
-                        renderPipActions()
-                        result.success(true)
-                    }
-                } else {
-                    result.success(false)
-                }
-            } ?: result.success(false)
-        } else if (call.method == "setAutoPipMode") {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                val aspectRatio = call.argument<List<Int>>("aspectRatio")
-                val autoEnter = call.argument<Boolean>("autoEnter")
-                val seamlessResize = call.argument<Boolean>("seamlessResize")
-                val params = PictureInPictureParams.Builder()
-                    .setAspectRatio(Rational(aspectRatio!![0], aspectRatio[1]))
-                    .setAutoEnterEnabled(autoEnter!!)
-                    .setSeamlessResizeEnabled(seamlessResize!!)
-                    .setActions(actions)
-
-                this.params = params
-
-                activity.setPictureInPictureParams(params.build())
-
-                result.success(true)
-            } else {
-                result.error(
-                    "NotImplemented",
-                    "System Version less than Android S found",
-                    "Expected Android S or newer."
-                )
-            }
-        } else {
-            result.notImplemented()
+        when (call.method) {
+            PIP_METHODS.GET_PLATFORM_VERSION.methodName -> getPlatformVersion(result)
+            PIP_METHODS.IS_PIP_AVAILABLE.methodName -> isPipAvailable(result)
+            PIP_METHODS.IS_PIP_ACTIVATED.methodName -> isPipActivated(result)
+            PIP_METHODS.IS_AUTO_PIP_AVAILABLE.methodName -> isAutoPipAvailable(result)
+            PIP_METHODS.ENTER_PIP_MODE.methodName -> enterPipMode(call, result)
+            PIP_METHODS.SET_PIP_LAYOUT.methodName -> setPipLayout(call, result)
+            PIP_METHODS.SET_IS_PLAYING.methodName -> setIsPlaying(call, result)
+            PIP_METHODS.SET_AUTO_PIP_MODE.methodName -> setAutoPipMode(call, result)
+            else -> result.notImplemented()
         }
     }
 
@@ -180,6 +118,107 @@ class SimplePipModePlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
     }
 
     override fun onDetachedFromActivity() {
+    }
+
+    /* METHOD IMPLEMENTATION */
+
+    private fun getPlatformVersion(result: MethodChannel.Result) {
+        result.success("Android ${Build.VERSION.RELEASE}")
+    }
+
+    private fun isPipAvailable(result: MethodChannel.Result) {
+        result.success(
+            activity.packageManager.hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE)
+        )
+    }
+
+    private fun isPipActivated(result: MethodChannel.Result) {
+        result.success(activity.isInPictureInPictureMode)
+    }
+
+    private fun isAutoPipAvailable(result: MethodChannel.Result) {
+        result.success(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
+    }
+
+    private fun enterPipMode(call: MethodCall, result: MethodChannel.Result) {
+        val aspectRatio = call.argument<List<Int>>("aspectRatio")
+        val autoEnter = call.argument<Boolean>("autoEnter")
+        val seamlessResize = call.argument<Boolean>("seamlessResize")
+        var params = PictureInPictureParams.Builder()
+            .setAspectRatio(Rational(aspectRatio!![0], aspectRatio[1]))
+            .setActions(actions)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            params = params.setAutoEnterEnabled(autoEnter!!)
+                .setSeamlessResizeEnabled(seamlessResize!!)
+        }
+
+        this.params = params
+
+        result.success(
+            activity.enterPictureInPictureMode(params.build())
+        )
+    }
+
+    private fun setPipLayout(call: MethodCall, result: MethodChannel.Result) {
+        val success = call.argument<String>("layout")?.let {
+            try {
+                Log.i("PIP", "layout = ${convertAction(it)}")
+                actionsLayout = PipActionsLayout.valueOf(convertAction(it))
+                actions = actionsLayout.remoteActions(context)
+                true
+            } catch (e: Exception) {
+                Log.e("PIP", e.message?: "Error setting layout")
+                false
+            }
+        } ?: false
+        result.success(success)
+    }
+
+    private fun setIsPlaying(call: MethodCall, result: MethodChannel.Result) {
+        call.argument<Boolean>("isPlaying")?.let { isPlaying ->
+            if (actionsLayout.actions.contains(PipAction.PLAY) ||
+                actionsLayout.actions.contains(PipAction.PAUSE)
+            ) {
+                var i = actionsLayout.actions.indexOf(PipAction.PLAY)
+                if (i == -1) {
+                    i = actionsLayout.actions.indexOf(PipAction.PAUSE)
+                }
+                if (i >= 0) {
+                    actionsLayout.actions[i] =
+                        if (isPlaying) PipAction.PAUSE else PipAction.PLAY
+                    renderPipActions()
+                    result.success(true)
+                }
+            } else {
+                result.success(false)
+            }
+        } ?: result.success(false)
+    }
+
+    private fun setAutoPipMode(call: MethodCall, result: MethodChannel.Result) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            val aspectRatio = call.argument<List<Int>>("aspectRatio")
+            val autoEnter = call.argument<Boolean>("autoEnter")
+            val seamlessResize = call.argument<Boolean>("seamlessResize")
+            val params = PictureInPictureParams.Builder()
+                .setAspectRatio(Rational(aspectRatio!![0], aspectRatio[1]))
+                .setAutoEnterEnabled(autoEnter!!)
+                .setSeamlessResizeEnabled(seamlessResize!!)
+                .setActions(actions)
+
+            this.params = params
+
+            activity.setPictureInPictureParams(params.build())
+
+            result.success(true)
+        } else {
+            result.error(
+                "NotImplemented",
+                "System Version less than Android S found",
+                "Expected Android S or newer."
+            )
+        }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
