@@ -22,8 +22,8 @@ enum class PipAction(
     NEXT(R.drawable.ic_baseline_skip_next_24, R.string.pip_action_next, R.string.pip_action_next_description),
     PREVIOUS(R.drawable.ic_baseline_skip_previous_24, R.string.pip_action_previous, R.string.pip_action_previous_description),
     LIVE(R.drawable.ic_surround_sound_24, R.string.pip_action_live, R.string.pip_action_live_description,),
-    REWIND(R.drawable.ic_baseline_replay_10_24,R.string.pip_action_rewind_10, R.string.pip_action_rewind_10_description),
-    FORWARD(R.drawable.ic_baseline_forward_10_24,R.string.pip_action_forward_10, R.string.pip_action_forward_10_description);
+    REWIND(R.drawable.ic_baseline_replay_10_24, R.string.pip_action_rewind_10, R.string.pip_action_rewind_10_description),
+    FORWARD(R.drawable.ic_baseline_forward_10_24, R.string.pip_action_forward_10, R.string.pip_action_forward_10_description);
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun toRemoteAction(context: Context) : RemoteAction = RemoteAction(
