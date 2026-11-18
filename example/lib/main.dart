@@ -9,13 +9,7 @@ import 'package:simple_pip_mode/pip_widget.dart'; // To build pip mode dependent
 import 'package:simple_pip_mode/simple_pip.dart'; // To enter pip mode and receive callbacks
 
 /// Some aspect ratio presets to choose
-const aspectRatios = [
-  (1, 1),
-  (2, 3),
-  (3, 2),
-  (16, 9),
-  (9, 16),
-];
+const aspectRatios = [(1, 1), (2, 3), (3, 2), (16, 9), (9, 16)];
 
 void main() {
   // Make sure binding is initialized
@@ -90,7 +84,6 @@ class _ExampleAppState extends State<ExampleApp> {
     return MaterialApp(
       // Pip widget can build different widgets for each mode
       home: PipWidget(
-        // builder is null so child is used when not in pip mode
         pipLayout: pipActionsLayout,
         onPipAction: _handlePipAction,
         child: Scaffold(
@@ -108,10 +101,7 @@ class _ExampleAppState extends State<ExampleApp> {
               ),
               const Row(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text('PiP Activated: '),
-                  Icon(Icons.close),
-                ],
+                children: [Text('PiP Activated: '), Icon(Icons.close)],
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -196,7 +186,6 @@ class _ExampleAppState extends State<ExampleApp> {
             ],
           ),
         ),
-        // pip builder is null so pip child is used when in pip mode
         pipChild: Scaffold(
           appBar: AppBar(title: const Text('Pip Mode')),
           body: Column(
@@ -208,7 +197,7 @@ class _ExampleAppState extends State<ExampleApp> {
               if (pipActionsLayout != PipActionsLayout.none) ...[
                 Icon(isPlaying ? Icons.pause : Icons.play_arrow),
                 Text(actionResponse),
-              ]
+              ],
             ],
           ),
         ),
@@ -227,10 +216,10 @@ class _ExampleAppState extends State<ExampleApp> {
   }
 
   void _handleEnterPip() => pip.enterPipMode(
-        aspectRatio: aspectRatio,
-        autoEnter: autoPipSwitch,
-        seamlessResize: autoPipSwitch,
-      );
+    aspectRatio: aspectRatio,
+    autoEnter: autoPipSwitch,
+    seamlessResize: autoPipSwitch,
+  );
 
   void _handleAutoSwitch(newValue) {
     pip.setAutoPipMode(

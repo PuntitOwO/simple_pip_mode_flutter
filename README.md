@@ -191,9 +191,6 @@ Import `pip_widget.dart` file.
 
 Add a `PipWidget` widget to your tree and give it a `child` and a `pipChild`.
 
-> [!Note]
-> `builder` and `pipBuilder` are deprecated. Use a `Builder` as the `child` or `pipChild` instead.
-
 ```dart
 import 'package:simple_pip_mode/pip_widget.dart';
 class MyWidget extends StatelessWidget {
