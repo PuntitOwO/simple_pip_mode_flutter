@@ -51,8 +51,10 @@ class SimplePip {
       'autoEnter': autoEnter,
       'seamlessResize': seamlessResize,
     };
-    final bool? enteredSuccessfully =
-        await _channel.invokeMethod('enterPipMode', params);
+    final bool? enteredSuccessfully = await _channel.invokeMethod(
+      'enterPipMode',
+      params,
+    );
     return enteredSuccessfully ?? false;
   }
 
@@ -68,8 +70,10 @@ class SimplePip {
       'autoEnter': autoEnter,
       'seamlessResize': seamlessResize,
     };
-    final bool? setSuccessfully =
-        await _channel.invokeMethod('setAutoPipMode', params);
+    final bool? setSuccessfully = await _channel.invokeMethod(
+      'setAutoPipMode',
+      params,
+    );
     return setSuccessfully ?? false;
   }
 
@@ -77,8 +81,10 @@ class SimplePip {
   /// The preset layout is defined by [PipActionsLayout] and it's equivalent enum inside Android src
   Future<bool> setPipActionsLayout(PipActionsLayout layout) async {
     Map params = {'layout': layout.name};
-    final bool? setSuccessfully =
-        await _channel.invokeMethod('setPipLayout', params);
+    final bool? setSuccessfully = await _channel.invokeMethod(
+      'setPipLayout',
+      params,
+    );
     return setSuccessfully ?? false;
   }
 
@@ -96,28 +102,29 @@ class SimplePip {
   /// Only affects media actions layout presets or presets that uses [PipAction.play] or [PipAction.pause] actions.
   Future<bool> setIsPlaying(bool isPlaying) async {
     Map params = {'isPlaying': isPlaying};
-    final bool? setSuccessfully =
-        await _channel.invokeMethod('setIsPlaying', params);
+    final bool? setSuccessfully = await _channel.invokeMethod(
+      'setIsPlaying',
+      params,
+    );
     return setSuccessfully ?? false;
   }
 
   SimplePip({this.onPipEntered, this.onPipExited, this.onPipAction}) {
     if (onPipEntered != null || onPipExited != null || onPipAction != null) {
-      _channel.setMethodCallHandler(
-        (call) async {
-          switch (call.method) {
-            case 'onPipEntered':
-              onPipEntered?.call();
-            case 'onPipExited':
-              onPipExited?.call();
-            case 'onPipAction':
-              String arg = call.arguments;
-              PipAction action =
-                  PipAction.values.firstWhere((e) => e.name == arg);
-              onPipAction?.call(action);
-          }
-        },
-      );
+      _channel.setMethodCallHandler((call) async {
+        switch (call.method) {
+          case 'onPipEntered':
+            onPipEntered?.call();
+          case 'onPipExited':
+            onPipExited?.call();
+          case 'onPipAction':
+            String arg = call.arguments;
+            PipAction action = PipAction.values.firstWhere(
+              (e) => e.name == arg,
+            );
+            onPipAction?.call(action);
+        }
+      });
     }
   }
 }

@@ -20,29 +20,29 @@ void main() {
     exitCallbackCalled = false;
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
-      switch (methodCall.method) {
-        case 'isPipAvailable':
-          return true;
-        case 'isPipActivated':
-          return activated;
-        case 'enterPipMode':
-          activated = true;
-          channel.invokeMethod('onPipEntered');
-          return activated;
-        case 'testExitPipMode':
-          activated = false;
-          channel.invokeMethod('onPipExited');
-          break;
-        // This handler overrides the SimplePip handler, so we add cases here.
-        case 'onPipEntered':
-          pip.onPipEntered?.call();
-          break;
-        case 'onPipExited':
-          pip.onPipExited?.call();
-          break;
-      }
-      return null;
-    });
+          switch (methodCall.method) {
+            case 'isPipAvailable':
+              return true;
+            case 'isPipActivated':
+              return activated;
+            case 'enterPipMode':
+              activated = true;
+              channel.invokeMethod('onPipEntered');
+              return activated;
+            case 'testExitPipMode':
+              activated = false;
+              channel.invokeMethod('onPipExited');
+              break;
+            // This handler overrides the SimplePip handler, so we add cases here.
+            case 'onPipEntered':
+              pip.onPipEntered?.call();
+              break;
+            case 'onPipExited':
+              pip.onPipExited?.call();
+              break;
+          }
+          return null;
+        });
   });
 
   tearDown(() {

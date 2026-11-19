@@ -216,10 +216,10 @@ class _ExampleAppState extends State<ExampleApp> {
   }
 
   void _handleEnterPip() => pip.enterPipMode(
-    aspectRatio: aspectRatio,
-    autoEnter: autoPipSwitch,
-    seamlessResize: autoPipSwitch,
-  );
+        aspectRatio: aspectRatio,
+        autoEnter: autoPipSwitch,
+        seamlessResize: autoPipSwitch,
+      );
 
   void _handleAutoSwitch(newValue) {
     pip.setAutoPipMode(
