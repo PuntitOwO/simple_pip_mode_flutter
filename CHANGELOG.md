@@ -1,3 +1,9 @@
+## 2.0.0
+
+* Update minimum supported SDK version to Flutter 3.44 and Dart 3.12.
+* Migrate to built-in Kotlin.
+* Remove deprecated members.
+
 ## 1.1.0
 
 * Fix namespace issue and add a new media action preset by [kmartins](https://github.com/kmartins): [PR #21](https://github.com/PuntitOwO/simple_pip_mode_flutter/pull/21)

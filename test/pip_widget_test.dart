@@ -9,108 +9,51 @@ void main() {
 
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  testWidgets(
-    'builder rendering should change when pip mode changes',
-    (WidgetTester tester) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          home: PipWidget(
-            builder: (_) => const Text('builder'),
-            pipBuilder: (_) => const Text('pipbuilder'),
-            pipChild: const Text('pipchild'),
-            child: const Text('child'),
-          ),
-        ),
-      );
-      final PipWidgetState state = tester.state(find.byType(PipWidget));
-      SimplePip pip = state.pip;
+  testWidgets('child rendering should change when pip mode changes', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: PipWidget(pipChild: Text('pipchild'), child: Text('child')),
+      ),
+    );
+    final PipWidgetState state = tester.state(find.byType(PipWidget));
+    SimplePip pip = state.pip;
 
-      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-          .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
-        switch (methodCall.method) {
-          case 'enterPipMode':
-            channel.invokeMethod('onPipEntered');
-            break;
-          // Simulate calling the exited callback
-          case 'testExitPipMode':
-            channel.invokeMethod('onPipExited');
-            break;
-          // This handler overrides the SimplePip handler, so we add cases here.
-          case 'onPipEntered':
-            pip.onPipEntered?.call();
-            break;
-          case 'onPipExited':
-            pip.onPipExited?.call();
-            break;
-        }
-        return null;
-      });
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
+          switch (methodCall.method) {
+            case 'enterPipMode':
+              channel.invokeMethod('onPipEntered');
+              break;
+            // Simulate calling the exited callback
+            case 'testExitPipMode':
+              channel.invokeMethod('onPipExited');
+              break;
+            // This handler overrides the SimplePip handler, so we add cases here.
+            case 'onPipEntered':
+              pip.onPipEntered?.call();
+              break;
+            case 'onPipExited':
+              pip.onPipExited?.call();
+              break;
+          }
+          return null;
+        });
 
-      expect(find.text('builder'), findsOneWidget);
-      expect(find.text('pipbuilder'), findsNothing);
+    expect(find.text('child'), findsOneWidget);
+    expect(find.text('pipchild'), findsNothing);
 
-      await pip.enterPipMode();
-      await tester.pump();
+    await pip.enterPipMode();
+    await tester.pump();
 
-      expect(find.text('builder'), findsNothing);
-      expect(find.text('pipbuilder'), findsOneWidget);
+    expect(find.text('child'), findsNothing);
+    expect(find.text('pipchild'), findsOneWidget);
 
-      await channel.invokeMethod('testExitPipMode');
-      await tester.pump();
+    await channel.invokeMethod('testExitPipMode');
+    await tester.pump();
 
-      expect(find.text('builder'), findsOneWidget);
-      expect(find.text('pipbuilder'), findsNothing);
-    },
-  );
-  testWidgets(
-    'child rendering should change when pip mode changes',
-    (WidgetTester tester) async {
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: PipWidget(
-            pipChild: Text('pipchild'),
-            child: Text('child'),
-          ),
-        ),
-      );
-      final PipWidgetState state = tester.state(find.byType(PipWidget));
-      SimplePip pip = state.pip;
-
-      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-          .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
-        switch (methodCall.method) {
-          case 'enterPipMode':
-            channel.invokeMethod('onPipEntered');
-            break;
-          // Simulate calling the exited callback
-          case 'testExitPipMode':
-            channel.invokeMethod('onPipExited');
-            break;
-          // This handler overrides the SimplePip handler, so we add cases here.
-          case 'onPipEntered':
-            pip.onPipEntered?.call();
-            break;
-          case 'onPipExited':
-            pip.onPipExited?.call();
-            break;
-        }
-        return null;
-      });
-
-      expect(find.text('child'), findsOneWidget);
-      expect(find.text('pipchild'), findsNothing);
-
-      await pip.enterPipMode();
-      await tester.pump();
-
-      expect(find.text('child'), findsNothing);
-      expect(find.text('pipchild'), findsOneWidget);
-
-      await channel.invokeMethod('testExitPipMode');
-      await tester.pump();
-
-      expect(find.text('child'), findsOneWidget);
-      expect(find.text('pipchild'), findsNothing);
-    },
-  );
+    expect(find.text('child'), findsOneWidget);
+    expect(find.text('pipchild'), findsNothing);
+  });
 }

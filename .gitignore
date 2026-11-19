@@ -30,3 +30,6 @@ build/
 
 # FVM Version Cache
 .fvm/
+
+# Mise config file
+mise.toml
